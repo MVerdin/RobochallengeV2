@@ -1,13 +1,9 @@
 from bluetooth import *
 import threading
+import time
+import sys
 
-def iniciarBT():
-    BTthread = threading.Thread(target=establecerConexionBT,name="conexionBT")
-    try:
-        BTthread.start()
-
-    except RuntimeError:
-        print("Error en conexion")
+bluetoothConectado=threading.Event()
 
 
 def establecerConexionBT():
@@ -25,14 +21,17 @@ def establecerConexionBT():
                        profiles = [ SERIAL_PORT_PROFILE ],
     #                   protocols = [ OBEX_UUID ]
                         )
+
+
     while True:
         print("Waiting for connection on RFCOMM channel %d" % port)
-
+        bluetoothConectado.clear()
         client_sock, client_info = server_sock.accept()
         print("Accepted connection from ", client_info)
-
+        bluetoothConectado.set()
         try:
             while True:
+
                 data = client_sock.recv(1024)
                 if len(data) == 0: break
                 # print("received [%s]" % data)
@@ -46,15 +45,30 @@ def establecerConexionBT():
                     derecha()
                 elif (str(data)=="b'l'"):
                     izquierda()
+                elif (str(data)=="b'd'"):
+                    sys.exit()
                 # print(str(data))
         except IOError:
            pass
+        except SystemExit:
+           client_sock.close()
+           server_sock.close()
+           print("all done")
+           break
 
         print("disconnected")
 
-    client_sock.close()
-    server_sock.close()
-    print("all done")
+
+
+
+
+def iniciarBT():
+    BTthread = threading.Thread(target=establecerConexionBT,name="conexionBT")
+    try:
+        BTthread.start()
+
+    except RuntimeError:
+        print("Error al iniciar hilo")
 
 def detenerse():
     print("detenido")
@@ -73,3 +87,10 @@ def izquierda():
 
 iniciarBT()
 print("hola")
+while True:
+    if (bluetoothConectado.is_set()):
+        print("conectado")
+    else:
+        print("desconectado")
+
+    time.sleep(1)
