@@ -60,8 +60,6 @@ def establecerConexionBT():
 
 
 
-
-
 def iniciarBT():
     BTthread = threading.Thread(target=establecerConexionBT,name="conexionBT")
     try:
@@ -69,6 +67,7 @@ def iniciarBT():
 
     except RuntimeError:
         print("Error al iniciar hilo")
+
 
 def detenerse():
     print("detenido")
