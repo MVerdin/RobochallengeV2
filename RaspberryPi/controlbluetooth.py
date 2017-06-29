@@ -4,9 +4,31 @@ import time
 import sys
 
 bluetoothConectado=threading.Event()
+comando=0
+#variable comando indica la orden recibida por el controlador bluetooth
+# 0=detenerse
+# 1=avanzar
+# 2=retroceder
+# 3=girar a la derecha
+# 4=girar a la izquierda
+mapeo_comando={
+    0:[1,0,0,0,0],
+    1:[0,1,0,0,0],
+    2:[0,0,1,0,0],
+    3:[0,0,0,1,0],
+    4:[0,0,0,0,1],
+}
+def iniciarBT():
+    global comando
+    BTthread = threading.Thread(target=establecerConexionBT,name="conexionBT")
+    try:
+        BTthread.start()
 
+    except RuntimeError:
+        print("Error al iniciar hilo")
 
 def establecerConexionBT():
+    global comando
     server_sock=BluetoothSocket( RFCOMM )
     server_sock.bind(("",PORT_ANY))
     server_sock.listen(1)
@@ -24,72 +46,60 @@ def establecerConexionBT():
 
 
     while True:
-        print("Waiting for connection on RFCOMM channel %d" % port)
-        bluetoothConectado.clear()
-        client_sock, client_info = server_sock.accept()
-        print("Accepted connection from ", client_info)
-        bluetoothConectado.set()
         try:
+            print("Waiting for connection on RFCOMM channel %d" % port)
+            bluetoothConectado.clear()
+            client_sock, client_info = server_sock.accept()
+            print("Accepted connection from ", client_info)
+            bluetoothConectado.set()
+
             while True:
 
                 data = client_sock.recv(1024)
                 if len(data) == 0: break
                 # print("received [%s]" % data)
                 if (str(data)=="b's'"):
-                    detenerse()
+                    comando=detenerse()
                 elif (str(data)=="b'f'"):
-                    avanzar()
+                    comando=avanzar()
                 elif (str(data)=="b'b'"):
-                    retroceder()
+                    comando=retroceder()
                 elif (str(data)=="b'r'"):
-                    derecha()
+                    comando=derecha()
                 elif (str(data)=="b'l'"):
-                    izquierda()
+                    comando=izquierda()
                 elif (str(data)=="b'd'"):
-                    sys.exit()
+                    break
                 # print(str(data))
         except IOError:
-           pass
+            pass
         except SystemExit:
-           client_sock.close()
-           server_sock.close()
-           print("all done")
-           break
+            client_sock.close()
+            server_sock.close()
+            print("all done")
+            break
+        except KeyboardInterrupt:
+            client_sock.close()
+            server_sock.close()
+            print("all done")
 
         print("disconnected")
 
-
-
-def iniciarBT():
-    BTthread = threading.Thread(target=establecerConexionBT,name="conexionBT")
-    try:
-        BTthread.start()
-
-    except RuntimeError:
-        print("Error al iniciar hilo")
-
+def obtenerComando():
+    return mapeo_comando[comando]
 
 def detenerse():
     print("detenido")
-
+    return 0
 def avanzar():
     print("avanzando")
-
+    return 1
 def retroceder():
     print("retrocediendo")
-
+    return 2
 def derecha():
     print("girando a la derecha")
-
+    return 3
 def izquierda():
     print("girando a la izquierda")
-
-iniciarBT()
-print("hola")
-while True:
-    if (bluetoothConectado.is_set()):
-        print("conectado")
-    else:
-        print("desconectado")
-
-    time.sleep(1)
+    return 4
