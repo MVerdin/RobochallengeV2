@@ -11,13 +11,23 @@ comando=0
 # 2=retroceder
 # 3=girar a la derecha
 # 4=girar a la izquierda
-mapeo_comando={
+int2onehot={
     0:[1,0,0,0,0],
     1:[0,1,0,0,0],
     2:[0,0,1,0,0],
     3:[0,0,0,1,0],
     4:[0,0,0,0,1],
 }
+
+comandos_esperados={
+    "b's'":0,
+    "b'f'":1,
+    "b'b'":2,
+    "b'r'":3,
+    "b'l'":4,
+    "b'd'":5,
+}
+
 def iniciarBT():
     global comando
     BTthread = threading.Thread(target=establecerConexionBT,name="conexionBT")
@@ -57,20 +67,10 @@ def establecerConexionBT():
 
                 data = client_sock.recv(1024)
                 if len(data) == 0: break
-                # print("received [%s]" % data)
-                if (str(data)=="b's'"):
-                    comando=detenerse()
-                elif (str(data)=="b'f'"):
-                    comando=avanzar()
-                elif (str(data)=="b'b'"):
-                    comando=retroceder()
-                elif (str(data)=="b'r'"):
-                    comando=derecha()
-                elif (str(data)=="b'l'"):
-                    comando=izquierda()
-                elif (str(data)=="b'd'"):
-                    break
-                # print(str(data))
+                if (data in comandos_esperados):
+                    comando = comandos_esperados[data]
+                    procesarComando(comando)
+
         except IOError:
             pass
         except SystemExit:
@@ -86,20 +86,18 @@ def establecerConexionBT():
         print("Desconectado")
 
 def obtenerComando():
-    return mapeo_comando[comando]
+    return int2onehot[comando]
 
-def detenerse():
-    print("detenido")
-    return 0
-def avanzar():
-    print("avanzando")
-    return 1
-def retroceder():
-    print("retrocediendo")
-    return 2
-def derecha():
-    print("girando a la derecha")
-    return 3
-def izquierda():
-    print("girando a la izquierda")
-    return 4
+def procesarComando(cmd):
+    if(cmd==0):
+        print("detenido")
+    elif(cmd==1):
+        print("avanzando")
+    elif(cmd==2):
+        print("retrocediendo")
+    elif(cmd==3):
+        print("girando a la derecha")
+    elif(cmd==4):
+        print("girando a la izquierda")
+    elif(cmd==5):
+        print("cerrando programa")
