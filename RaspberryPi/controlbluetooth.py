@@ -47,10 +47,10 @@ def establecerConexionBT():
 
     while True:
         try:
-            print("Waiting for connection on RFCOMM channel %d" % port)
+            print("Esperando conexion en puerto %d" % port)
             bluetoothConectado.clear()
             client_sock, client_info = server_sock.accept()
-            print("Accepted connection from ", client_info)
+            print("Conexion aceptada ", client_info)
             bluetoothConectado.set()
 
             while True:
@@ -76,14 +76,14 @@ def establecerConexionBT():
         except SystemExit:
             client_sock.close()
             server_sock.close()
-            print("all done")
+            print("Conexion cerrada")
             break
         except KeyboardInterrupt:
             client_sock.close()
             server_sock.close()
-            print("all done")
+            print("Conexion cerrada")
 
-        print("disconnected")
+        print("Desconectado")
 
 def obtenerComando():
     return mapeo_comando[comando]
