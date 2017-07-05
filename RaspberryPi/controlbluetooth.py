@@ -1,9 +1,11 @@
 from bluetooth import *
-import threading
+# import threading
+import multiprocessing
 import time
 import sys
 
-bluetoothConectado=threading.Event()
+# bluetoothConectado=threading.Event()
+bluetoothConectado=multiprocessing.Event()
 comando=0
 #variable comando indica la orden recibida por el controlador bluetooth
 # 0=detenerse
@@ -20,9 +22,10 @@ mapeo_comando={
 }
 def iniciarBT():
     global comando
-    BTthread = threading.Thread(target=establecerConexionBT,name="conexionBT")
+    #BTthread = threading.Thread(target=establecerConexionBT,name="conexionBT")
+    BTprocess = multiprocessing.Process(target=establecerConexionBT,name="conexionBT")
     try:
-        BTthread.start()
+        BTprocess.start()
 
     except RuntimeError:
         print("Error al iniciar hilo")
