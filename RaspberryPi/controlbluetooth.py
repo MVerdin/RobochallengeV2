@@ -31,6 +31,7 @@ def iniciarBT():
         print("Error al iniciar hilo")
 
 def establecerConexionBT(pipe):
+    comando=0
     server_sock=BluetoothSocket( RFCOMM )
     server_sock.bind(("",PORT_ANY))
     server_sock.listen(1)
