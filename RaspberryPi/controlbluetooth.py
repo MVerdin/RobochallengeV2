@@ -6,7 +6,6 @@ import sys
 
 # bluetoothConectado=threading.Event()
 bluetoothConectado=multiprocessing.Event()
-comando=0
 #variable comando indica la orden recibida por el controlador bluetooth
 # 0=detenerse
 # 1=avanzar
@@ -20,18 +19,18 @@ mapeo_comando={
     3:[0,0,0,1,0],
     4:[0,0,0,0,1],
 }
+pipe1, pipe2 = multiprocessing.Pipe()
 def iniciarBT():
-    global comando
     #BTthread = threading.Thread(target=establecerConexionBT,name="conexionBT")
-    BTprocess = multiprocessing.Process(target=establecerConexionBT,name="conexionBT")
+
+    BTprocess = multiprocessing.Process(target=establecerConexionBT,name="conexionBT", args=(pipe2,))
     try:
         BTprocess.start()
 
     except RuntimeError:
         print("Error al iniciar hilo")
 
-def establecerConexionBT():
-    global comando
+def establecerConexionBT(pipe):
     server_sock=BluetoothSocket( RFCOMM )
     server_sock.bind(("",PORT_ANY))
     server_sock.listen(1)
@@ -59,7 +58,7 @@ def establecerConexionBT():
             while True:
 
                 data = client_sock.recv(1024)
-                if len(data) == 0: break
+                if (len(data) == 0): break
                 # print("received [%s]" % data)
                 if (str(data)=="b's'"):
                     comando=detenerse()
@@ -72,7 +71,11 @@ def establecerConexionBT():
                 elif (str(data)=="b'l'"):
                     comando=izquierda()
                 elif (str(data)=="b'd'"):
-                    break
+                    apagar()
+
+                if (pipe.poll()):
+                    if (pipe.recv()=="enviarcomando"):
+                        pipe.send(comando)
                 # print(str(data))
         except IOError:
             pass
@@ -85,11 +88,13 @@ def establecerConexionBT():
             client_sock.close()
             server_sock.close()
             print("all done")
+            break
 
         print("disconnected")
 
 def obtenerComando():
-    return mapeo_comando[comando]
+    pipe1.send("enviarcomando")
+    return mapeo_comando[pipe1.recv()]
 
 def detenerse():
     print("detenido")
@@ -106,3 +111,5 @@ def derecha():
 def izquierda():
     print("girando a la izquierda")
     return 4
+def apagar():
+    print("cerrando programa")
