@@ -1,33 +1,35 @@
 from bluetooth import *
 import threading
 import sys
+import RPi.GPIO as GPIO
+GPIO.setmode(GPIO.BOARD)
 
 bluetoothConectado=threading.Event()
-comando=0
-#variable comando indica la orden recibida por el controlador bluetooth
-# 0=detenerse
-# 1=avanzar
-# 2=retroceder
-# 3=girar a la derecha
-# 4=girar a la izquierda
-int2onehot={
-    0:[1,0,0,0,0],
-    1:[0,1,0,0,0],
-    2:[0,0,1,0,0],
-    3:[0,0,0,1,0],
-    4:[0,0,0,0,1],
+comando="s"
+#Canales de salidas a motores
+#(motorderA, motorderB, motorizqA, motorizqB)
+canales_motores=(3,5,7,8)
+GPIO.setup(canales_motores,GPIO.OUT)
+#(motorderA, motorderB, motorizqA, motorizqB)
+comandos_a_motores={
+    "s":(0,0,0,0),
+    "f":(1,0,1,0),
+    "b":(0,1,0,1),
+    "r":(1,0,0,1),
+    "l":(0,1,1,0),
+}
+#mapeo de comandos a vector one hot para el entrenamiento
+cmd2onehot={
+    "s":[1,0,0,0,0],
+    "f":[0,1,0,0,0],
+    "b":[0,0,1,0,0],
+    "r":[0,0,0,1,0],
+    "l":[0,0,0,0,1],
 }
 
-comandos_esperados={
-    "s":0,
-    "f":1,
-    "b":2,
-    "r":3,
-    "l":4,
-    "d":5,
-}
 
 def iniciarBT():
+
     global comando
     BTthread = threading.Thread(target=establecerConexionBT,name="conexionBT")
     try:
@@ -66,12 +68,10 @@ def establecerConexionBT():
 
                 data = client_sock.recv(1024)
                 if len(data) == 0: break
-                if (str(data, errors="strict") in comandos_esperados):
-                    comando = comandos_esperados[str(data, errors="strict")]
-                    if (comando==5):
+                if (procesarComando(str(data, errors="strict"))):
+                    comando = str(data, errors="strict")
+                    if(comando=="d"):
                         sys.exit()
-                    else:
-                        procesarComando(comando)
 
         except IOError:
             pass
@@ -79,28 +79,30 @@ def establecerConexionBT():
             client_sock.close()
             server_sock.close()
             print("Conexion cerrada")
+            GPIO.cleanup(canales_motores)
+            print("GPIO limpiados")
             sys.exit()
         except KeyboardInterrupt:
             client_sock.close()
             server_sock.close()
             print("Conexion cerrada")
+            GPIO.cleanup(canales_motores)
+            print("GPIO limpiados")
             sys.exit()
 
         print("Desconectado")
 
 def obtenerComando():
-    if (comando==5):
+    if (comando=="d"):
         sys.exit()
-    return int2onehot[comando]
+    return cmd2onehot[comando]
 
 def procesarComando(cmd):
-    if(cmd==0):
-        print("detenido")
-    elif(cmd==1):
-        print("avanzando")
-    elif(cmd==2):
-        print("retrocediendo")
-    elif(cmd==3):
-        print("girando a la derecha")
-    elif(cmd==4):
-        print("girando a la izquierda")
+    if (cmd=="d"):
+        return True
+    elif(cmd in comandos_a_motores and cmd in cmd2onehot):
+        GPIO.output(canales_motores, comandos_a_motores[cmd])
+        return True
+    else:
+        print("Comando desconocido")
+        return False
