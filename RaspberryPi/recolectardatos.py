@@ -1,6 +1,6 @@
 import controlbluetooth as cbt
 import time
-from controlbluetooth import comando
+
 cbt.iniciarBT()
 
 while True:

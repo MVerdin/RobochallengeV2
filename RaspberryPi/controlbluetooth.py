@@ -1,6 +1,5 @@
 from bluetooth import *
 import threading
-import time
 import sys
 
 bluetoothConectado=threading.Event()
@@ -20,12 +19,12 @@ int2onehot={
 }
 
 comandos_esperados={
-    "b's'":0,
-    "b'f'":1,
-    "b'b'":2,
-    "b'r'":3,
-    "b'l'":4,
-    "b'd'":5,
+    "s":0,
+    "f":1,
+    "b":2,
+    "r":3,
+    "l":4,
+    "d":5,
 }
 
 def iniciarBT():
@@ -60,16 +59,19 @@ def establecerConexionBT():
             print("Esperando conexion en puerto %d" % port)
             bluetoothConectado.clear()
             client_sock, client_info = server_sock.accept()
-            print("Conexion aceptada ", client_info)
+            print("Conectado a: ", client_info)
             bluetoothConectado.set()
 
             while True:
 
                 data = client_sock.recv(1024)
                 if len(data) == 0: break
-                if (data in comandos_esperados):
-                    comando = comandos_esperados[data]
-                    procesarComando(comando)
+                if (str(data, errors="strict") in comandos_esperados):
+                    comando = comandos_esperados[str(data, errors="strict")]
+                    if (comando==5):
+                        sys.exit()
+                    else:
+                        procesarComando(comando)
 
         except IOError:
             pass
@@ -77,15 +79,18 @@ def establecerConexionBT():
             client_sock.close()
             server_sock.close()
             print("Conexion cerrada")
-            break
+            sys.exit()
         except KeyboardInterrupt:
             client_sock.close()
             server_sock.close()
             print("Conexion cerrada")
+            sys.exit()
 
         print("Desconectado")
 
 def obtenerComando():
+    if (comando==5):
+        sys.exit()
     return int2onehot[comando]
 
 def procesarComando(cmd):
@@ -99,5 +104,3 @@ def procesarComando(cmd):
         print("girando a la derecha")
     elif(cmd==4):
         print("girando a la izquierda")
-    elif(cmd==5):
-        print("cerrando programa")
