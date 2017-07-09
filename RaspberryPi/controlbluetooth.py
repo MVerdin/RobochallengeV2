@@ -1,6 +1,7 @@
 from bluetooth import *
 import threading
 import sys
+import numpy as np
 import RPi.GPIO as GPIO
 GPIO.setmode(GPIO.BOARD)
 
