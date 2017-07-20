@@ -29,10 +29,15 @@ class VentanaPrincipal(wx.Frame):
         self.intextLR = wx.TextCtrl(self, wx.ID_ANY, "")
         self.buttonEntrenar = wx.Button(self, wx.ID_ANY, "Entrenar")
         self.buttonCancelar = wx.Button(self, wx.ID_ANY, "Cancelar")
-
+        self.textConsola = wx.StaticText(self, wx.ID_ANY, "")
         self.__set_properties()
         self.__do_layout()
+        self.buttonEntrenar.Bind(wx.EVT_BUTTON, self.OnButton)
         # end wxGlade
+
+    def OnButton(self,evnt):
+        self.textConsola.SetLabel("Hola")
+        print(evnt)
 
     def __set_properties(self):
         # begin wxGlade: MyFrame.__set_properties
@@ -49,8 +54,8 @@ class VentanaPrincipal(wx.Frame):
         sizer_5 = wx.BoxSizer(wx.HORIZONTAL)
         sizer_6 = wx.BoxSizer(wx.HORIZONTAL)
         sizer_2 = wx.BoxSizer(wx.HORIZONTAL)
-        textConsola = wx.StaticText(self, wx.ID_ANY, "")
-        sizer_1.Add(textConsola, 1, wx.EXPAND, 0)
+        #textConsola = wx.StaticText(self, wx.ID_ANY, "")
+        sizer_1.Add(self.textConsola, 1, wx.EXPAND, 0)
         sizer_2.Add(self.checkboxContinuarEnt, 0, 0, 0)
         sizer_2.Add(self.intextRutaModelo, 1, 0, 0)
         sizer_1.Add(sizer_2, 0, wx.EXPAND, 0)
@@ -75,13 +80,10 @@ class VentanaPrincipal(wx.Frame):
 
 class Aplicacion(wx.App):
     def OnInit(self):
-        #self.res = xrc.XmlResource(GUI_FILENAME)
-        self.frame = VentanaPrincipal(None)#self.res.LoadFrame(None, GUI_MAINFRAME_NAME)
+        self.frame = VentanaPrincipal(None)
         self.frame.Show()
         return True
 
-# end of class MyFrame
+
 app = Aplicacion()
-#ventana = MyFrame()
-#ventana.show()
 app.MainLoop()
