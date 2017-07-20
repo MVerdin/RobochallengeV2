@@ -14,7 +14,7 @@ import gettext
 # end wxGlade
 
 
-class MyFrame(wx.Frame):
+class VentanaPrincipal(wx.Frame):
     def __init__(self, *args, **kwds):
         # begin wxGlade: MyFrame.__init__
         kwds["style"] = wx.DEFAULT_FRAME_STYLE
@@ -73,17 +73,15 @@ class MyFrame(wx.Frame):
         # end wxGlade
 
 
-class MyApp(wx.App):
+class Aplicacion(wx.App):
     def OnInit(self):
         #self.res = xrc.XmlResource(GUI_FILENAME)
-        self.frame = MyFrame(None)#self.res.LoadFrame(None, GUI_MAINFRAME_NAME)
+        self.frame = VentanaPrincipal(None)#self.res.LoadFrame(None, GUI_MAINFRAME_NAME)
         self.frame.Show()
         return True
 
 # end of class MyFrame
-app = MyApp()
+app = Aplicacion()
 #ventana = MyFrame()
 #ventana.show()
 app.MainLoop()
-
-
