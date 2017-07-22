@@ -8,28 +8,25 @@ contador=0
 
 
 def OnButtonEntrenar(evnt):
-    ruta_modelo = app.frame.intextRutaModelo.GetValue()
-
-    if app.frame.checkboxContinuarEnt.GetValue():
+    (ruta_modelo, ruta_datos, tensorboard, continuarentrenamiento,
+     lrperzonalizado, optimizador, lr) = app.frame.ObtenerValores()
+    if continuarentrenamiento:
         if os.path.isfile(ruta_modelo):
             try:
                 modelo = keras.models.load_model(ruta_modelo)
             except ValueError:
                 print("Archivo invalido")
-
-    ruta_datos = app.frame.intextRutaDatos.GetValue()
-    lr = app.frame.intextLR.GetValue()
-    optimizador = "adam" if app.frame.radioADAM.GetValue() else "cgd"
-    tensorboard = app.frame.checkboxTensorboard.GetValue()
+    else:
+        modelo = modelos.GenerarModelo()
 
 
-    Entrenar(modelos.GenerarModelo(180,240,5),optimizador,lr,tensorboard,ruta_datos)
+    Entrenar(ruta_modelo,optimizador,lr,tensorboard,ruta_datos)
 
 def OnButtonCancelar(evnt):
     pass
 
 def Entrenar(modelo, optimizador, lr, tb, carpetadatos):
-    print("Optimizador: {} | LR: {} | TB: {} | Datos para ent: {}".format(optimizador, lr, tb, carpetadatos))
+    print("Modelo: {} | Optimizador: {} | LR: {} | TB: {} | Datos para ent: {}".format(modelo, optimizador, lr, tb, carpetadatos))
 
 
 if __name__ == "__main__":

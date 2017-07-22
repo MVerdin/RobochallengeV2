@@ -31,12 +31,6 @@ class VentanaPrincipal(wx.Frame):
         self.textRutaDatos = wx.StaticText(self, wx.ID_ANY, "Carpeta de datos")
         self.__set_properties()
         self.__do_layout()
-#        self.buttonEntrenar.Bind(wx.EVT_BUTTON, self.OnButton)
-        # end wxGlade
-
-#    def OnButton(self,evnt):
-#        self.textConsola.SetLabel("Hola")
-#        print(evnt)
 
     def __set_properties(self):
         # begin wxGlade: MyFrame.__set_properties
@@ -78,6 +72,18 @@ class VentanaPrincipal(wx.Frame):
         self.Layout()
         self.SetSize((600, 500))
         # end wxGlade
+
+    def ObtenerValores(self):
+        ruta_modelo = self.intextRutaModelo.GetPath()
+        ruta_datos = self.intextRutaDatos.GetPath()
+        tensorboard = self.checkboxTensorboard.GetValue()
+        continuarentrenamiento=self.checkboxContinuarEnt.GetValue()
+        lrperzonalizado = self.checkboxLRP.GetValue()
+        optimizador = "adam" if self.radioADAM.GetValue() else "cgd"
+        lr = self.intextLR.GetValue()
+        return (ruta_modelo, ruta_datos, tensorboard, continuarentrenamiento,
+                lrperzonalizado, optimizador, lr)
+
 
 
 class Aplicacion(wx.App):
