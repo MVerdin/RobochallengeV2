@@ -29,7 +29,7 @@ def OnButtonCancelar(evnt):
     pass
 
 def Entrenar(modelo, optimizador, lr, tb, carpetadatos):
-    print(Optimizador: {} | LR: {} | TB: {} | Datos para ent: {}".format(optimizador, lr, tb, carpetadatos))
+    print("Optimizador: {} | LR: {} | TB: {} | Datos para ent: {}".format(optimizador, lr, tb, carpetadatos))
 
 
 if __name__ == "__main__":
