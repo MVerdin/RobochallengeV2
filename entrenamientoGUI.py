@@ -7,10 +7,9 @@
 import wx
 import gettext
 
-
-
-
+#Clase generada en wxGlade para la creacion de la ventana
 class VentanaPrincipal(wx.Frame):
+    #Creacion de componentes de la ventana
     def __init__(self, *args, **kwds):
         # begin wxGlade: MyFrame.__init__
         kwds["style"] = wx.DEFAULT_FRAME_STYLE
@@ -34,12 +33,14 @@ class VentanaPrincipal(wx.Frame):
         self.__set_properties()
         self.__do_layout()
 
+    #Configuracion de la ventana
     def __set_properties(self):
         # begin wxGlade: MyFrame.__set_properties
         self.SetTitle("Entrenamiento")
         self.SetSize((600, 500))
         # end wxGlade
 
+    #Acomodo de los widgets
     def __do_layout(self):
         # begin wxGlade: MyFrame.__do_layout
         sizer_1 = wx.BoxSizer(wx.VERTICAL)
@@ -81,6 +82,7 @@ class VentanaPrincipal(wx.Frame):
         self.checkboxLRP.Bind(wx.EVT_CHECKBOX, self.OnClickCheckBox)
         # end wxGlade
 
+    #Funcion que lee los introducidos en los widgets
     def ObtenerValores(self):
         ruta_modelo = self.intextRutaModelo.GetPath()
         ruta_datos = self.intextRutaDatos.GetPath()
@@ -92,6 +94,7 @@ class VentanaPrincipal(wx.Frame):
         return (ruta_modelo, ruta_datos, tensorboard, continuarentrenamiento,
                 lrperzonalizado, optimizador, lr)
 
+    #Funcion que habilita o deshabilita los widgets dependiendo de las opciones seleccionadas
     def HabilitarWidgets(self):
         #self.buttonCancelar
         #self.buttonEntrenar
@@ -105,6 +108,7 @@ class VentanaPrincipal(wx.Frame):
         self.radioCGD.Enable(self.checkboxCambiarPropiedades.GetValue())
         self.radioADAM.Enable(self.checkboxCambiarPropiedades.GetValue())
 
+    #Funcion callback relacionada a los checkbox de la ventana
     def OnClickCheckBox(self,evnt):
         self.HabilitarWidgets()
 

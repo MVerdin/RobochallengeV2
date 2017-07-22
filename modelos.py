@@ -1,5 +1,7 @@
+#!/usr/bin/env python3
 import tensorflow.contrib.keras as keras
 
+#Funcion para generar el modelo keras de la red neuronal
 def GenerarModelo(anchoimg,altoimg,clases):
     entradaImagen = keras.layers.Input(shape=(altoimg,anchoimg,1))
 
