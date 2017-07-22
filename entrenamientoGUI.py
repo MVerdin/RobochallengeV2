@@ -21,6 +21,8 @@ class VentanaPrincipal(wx.Frame):
         #self.intextRutaDatos = wx.TextCtrl(self, wx.ID_ANY, "Ruta de datos para entrenamiento")
         self.intextRutaDatos = wx.DirPickerCtrl(self,message="Ruta de los datos para entrenamiento", style=wx.FLP_USE_TEXTCTRL)
         self.checkboxTensorboard = wx.CheckBox(self, wx.ID_ANY, "Tensorboard")
+        self.checkboxTensorboard.SetValue(True)
+        self.checkboxCambiarPropiedades = wx.CheckBox(self, wx.ID_ANY, "Cambiar propiedades")
         self.radioADAM = wx.RadioButton(self, wx.ID_ANY, "ADAM")
         self.radioCGD = wx.RadioButton(self, wx.ID_ANY, "CGD")
         self.checkboxLRP = wx.CheckBox(self, wx.ID_ANY, "LR personalizado")
@@ -48,6 +50,7 @@ class VentanaPrincipal(wx.Frame):
         sizer_6 = wx.BoxSizer(wx.HORIZONTAL)
         sizer_2 = wx.BoxSizer(wx.HORIZONTAL)
         sizer_8 = wx.BoxSizer(wx.HORIZONTAL)
+        sizer_9 = wx.BoxSizer(wx.HORIZONTAL)
         #textConsola = wx.StaticText(self, wx.ID_ANY, "")
         sizer_1.Add(self.textConsola, 1, wx.EXPAND, 0)
         sizer_2.Add(self.checkboxContinuarEnt, 0, 0, 0)
@@ -56,7 +59,9 @@ class VentanaPrincipal(wx.Frame):
         sizer_1.Add(sizer_8, 0, wx.EXPAND, 0)
         sizer_8.Add(self.textRutaDatos, 0, 0, 0)
         sizer_8.Add(self.intextRutaDatos, 1, 0, 0)
-        sizer_4.Add(self.checkboxTensorboard, 0, wx.EXPAND, 0)
+        sizer_9.Add(self.checkboxTensorboard, 1, 0, 0)
+        sizer_9.Add(self.checkboxCambiarPropiedades, 1, 0, 0)
+        sizer_4.Add(sizer_9, 0, wx.EXPAND, 0)
         sizer_6.Add(self.radioADAM, 1, 0, 0)
         sizer_6.Add(self.radioCGD, 1, 0, 0)
         sizer_4.Add(sizer_6, 0, wx.EXPAND, 0)
@@ -71,6 +76,9 @@ class VentanaPrincipal(wx.Frame):
         self.SetSizer(sizer_1)
         self.Layout()
         self.SetSize((600, 500))
+        self.checkboxCambiarPropiedades.Bind(wx.EVT_CHECKBOX, self.OnClickCheckBox)
+        self.checkboxContinuarEnt.Bind(wx.EVT_CHECKBOX, self.OnClickCheckBox)
+        self.checkboxLRP.Bind(wx.EVT_CHECKBOX, self.OnClickCheckBox)
         # end wxGlade
 
     def ObtenerValores(self):
@@ -84,10 +92,25 @@ class VentanaPrincipal(wx.Frame):
         return (ruta_modelo, ruta_datos, tensorboard, continuarentrenamiento,
                 lrperzonalizado, optimizador, lr)
 
+    def HabilitarWidgets(self):
+        #self.buttonCancelar
+        #self.buttonEntrenar
+        #self.checkboxCambiarPropiedades
+        #self.checkboxContinuarEnt
+        self.checkboxLRP.Enable(self.checkboxCambiarPropiedades.GetValue())
+        #self.checkboxTensorboard
+        self.intextLR.Enable(self.checkboxLRP.GetValue() and self.checkboxCambiarPropiedades.GetValue())
+        #self.intextRutaDatos.Enable()
+        self.intextRutaModelo.Enable(self.checkboxContinuarEnt.GetValue())
+        self.radioCGD.Enable(self.checkboxCambiarPropiedades.GetValue())
+        self.radioADAM.Enable(self.checkboxCambiarPropiedades.GetValue())
 
+    def OnClickCheckBox(self,evnt):
+        self.HabilitarWidgets()
 
 class Aplicacion(wx.App):
     def OnInit(self):
         self.frame = VentanaPrincipal(None)
+        self.frame.HabilitarWidgets()
         self.frame.Show()
         return True

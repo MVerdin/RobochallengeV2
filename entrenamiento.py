@@ -18,12 +18,11 @@ def OnButtonEntrenar(evnt):
                 print("Archivo invalido")
     else:
         modelo = modelos.GenerarModelo()
-
-
     Entrenar(ruta_modelo,optimizador,lr,tensorboard,ruta_datos)
 
 def OnButtonCancelar(evnt):
     pass
+
 
 def Entrenar(modelo, optimizador, lr, tb, carpetadatos):
     print("Modelo: {} | Optimizador: {} | LR: {} | TB: {} | Datos para ent: {}".format(modelo, optimizador, lr, tb, carpetadatos))
@@ -33,4 +32,5 @@ if __name__ == "__main__":
     app = egui.Aplicacion()
     app.frame.buttonEntrenar.Bind(wx.EVT_BUTTON, OnButtonEntrenar)
     app.frame.buttonCancelar.Bind(wx.EVT_BUTTON, OnButtonCancelar)
+
     app.MainLoop()
