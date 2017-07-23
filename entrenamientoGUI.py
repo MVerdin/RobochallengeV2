@@ -6,9 +6,12 @@
 
 import wx
 import gettext
+import entrenamiento
+import modelos
+import os
 
 #Clase generada en wxGlade para la creacion de la ventana
-class VentanaPrincipal(wx.Frame):
+class Ventana(wx.Frame):
     #Creacion de componentes de la ventana
     def __init__(self, *args, **kwds):
         # begin wxGlade: MyFrame.__init__
@@ -91,8 +94,9 @@ class VentanaPrincipal(wx.Frame):
         lrperzonalizado = self.checkboxLRP.GetValue()
         optimizador = "adam" if self.radioADAM.GetValue() else "cgd"
         lr = self.intextLR.GetValue()
+        cambiarpropiedades = self.checkboxCambiarPropiedades.GetValue()
         return (ruta_modelo, ruta_datos, tensorboard, continuarentrenamiento,
-                lrperzonalizado, optimizador, lr)
+                lrperzonalizado, optimizador, lr, cambiarpropiedades)
 
     #Funcion que habilita o deshabilita los widgets dependiendo de las opciones seleccionadas
     def HabilitarWidgets(self):
@@ -112,9 +116,25 @@ class VentanaPrincipal(wx.Frame):
     def OnClickCheckBox(self,evnt):
         self.HabilitarWidgets()
 
-class Aplicacion(wx.App):
+class App(wx.App):
     def OnInit(self):
-        self.frame = VentanaPrincipal(None)
-        self.frame.HabilitarWidgets()
-        self.frame.Show()
+        self.ventana = Ventana(None)
+        self.ventana.HabilitarWidgets()
+        self.ventana.Show()
         return True
+
+
+#Funcion llamada por el boton "Entrenar"
+def OnButtonEntrenar(evnt):
+     entrenamiento.Entrenar(*app.ventana.ObtenerValores())
+
+
+#Funcion llamada por el boton "Cancelar"
+def OnButtonCancelar(evnt):
+    pass
+
+if __name__ == "__main__":
+    app = App()
+    app.ventana.buttonEntrenar.Bind(wx.EVT_BUTTON, OnButtonEntrenar)
+    app.ventana.buttonCancelar.Bind(wx.EVT_BUTTON, OnButtonCancelar)
+    app.MainLoop()
