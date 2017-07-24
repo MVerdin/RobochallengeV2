@@ -20,8 +20,12 @@ contador=0
 nombre_de_archivos='training_data-{0}.npy'
 
 def VerificarDimensiones(modelo, loteimagenes, lotesalidas):
+    print("Dimensiones:")
+    print("Imagenes: {} | Entrada de modelo: {}".format(loteimagenes.shape[1:],modelo.input_shape[1:]))
+    print("Salidas: {} | Salida de modelo {}".format(lotesalidas.shape[1:],modelo.output_shape[1:]))
     return (modelo.input_shape[1:]==loteimagenes.shape[1:]
             and modelo.output_shape[1:]==lotesalidas.shape[1:])
+
 
 def CargarModelo(ruta):
     print("Abriendo archivo de modelo")
@@ -29,6 +33,7 @@ def CargarModelo(ruta):
         modelo = keras.models.load_model(ruta)
     else:
         raise Exception("Archivo no encontrado")
+    return modelo
 
 def BuscarArchivosEntrenamiento(ruta):
     if os.path.isdir(ruta):
@@ -41,7 +46,7 @@ def BuscarArchivosEntrenamiento(ruta):
             print("Archivos encontrados:", len(archivos_encontrados))
             for archivo in sorted(archivos_encontrados):
                 print(archivo)
-            archivos_encontrados = [ruta + "/" + nombre for nombre in archivos_encontrados]
+            archivos_encontrados = [os.path.join(ruta,nombre) for nombre in archivos_encontrados]
             shuffle(archivos_encontrados)
             return archivos_encontrados
         else:
@@ -85,6 +90,8 @@ def Entrenar(ruta_modelo, ruta_datos, tensorboard, continuarentrenamiento,
         print("Generando modelo")
         modelo = modelos.GenerarModelo(imagenes.shape[1],imagenes.shape[2],imagenes.shape[3],salidas.shape[1])
         print("Modelo generado correctamente")
+
+    modelo.save(os.path.join(ruta_datos, "modelo1.h5"))
 
 if __name__ == "__main__":
     pass
