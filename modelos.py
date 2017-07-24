@@ -31,5 +31,4 @@ def GenerarModelo(altoimg,anchoimg,canalesimg,clases):
 
 
 if __name__ == "__main__":
-    modelo = GenerarModelo(180,240,3,5)
-    print(modelo.input_shape)
+    pass
