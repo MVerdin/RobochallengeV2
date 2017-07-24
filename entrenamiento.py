@@ -49,6 +49,12 @@ def BuscarArchivosEntrenamiento(ruta):
     else:
         raise Exception("Carpeta no encontrada")
 
+def CargarySepararArchivo(ruta_archivo):
+    datos_para_entrenamiento = np.load(ruta_archivo)
+    imagenes = np.array([dato[0] for dato in datos_para_entrenamiento])
+    salidas = np.array([dato[1] for dato in datos_para_entrenamiento])
+    return imagenes, salidas
+
 #Funcion de entrenamiento
 def Entrenar(ruta_modelo, ruta_datos, tensorboard, continuarentrenamiento,
  lrperzonalizado, optimizador, lr, cambiarpropiedades):
@@ -60,10 +66,7 @@ def Entrenar(ruta_modelo, ruta_datos, tensorboard, continuarentrenamiento,
         print(e)
         return
 
-    datos_para_entrenamiento = np.load(archivos_entrenamiento[0])
-
-    imagenes = np.array([dato[0] for dato in datos_para_entrenamiento])
-    salidas = np.array([dato[1] for dato in datos_para_entrenamiento])
+    imagenes, salidas = CargarySepararArchivo(archivos_entrenamiento[0])
 
     if continuarentrenamiento:
         try:
