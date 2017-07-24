@@ -14,6 +14,7 @@ import tensorflow.contrib.keras as keras
 import modelos
 import os
 import numpy as np
+from random import shuffle
 contador=0
 
 nombre_de_archivos='training_data-{0}.npy'
@@ -29,29 +30,37 @@ def CargarModelo(ruta):
     else:
         raise Exception("Archivo no encontrado")
 
+def BuscarArchivosEntrenamiento(ruta):
+    if os.path.isdir(ruta):
+        print("Buscando datos para entrenamiento")
+        archivos_encontrados = [nombre_archivo for nombre_archivo
+                               in os.listdir(ruta)
+                               if nombre_archivo.startswith(nombre_de_archivos.split("-")[0])
+                               and nombre_archivo.endswith(nombre_de_archivos.split(".")[1])]
+        if(len(archivos_encontrados)!=0):
+            print("Archivos encontrados:", len(archivos_encontrados))
+            for archivo in sorted(archivos_encontrados):
+                print(archivo)
+            archivos_encontrados = [ruta + "/" + nombre for nombre in archivos_encontrados]
+            shuffle(archivos_encontrados)
+            return archivos_encontrados
+        else:
+            raise Exception("No se encontraron archivos")
+    else:
+        raise Exception("Carpeta no encontrada")
+
 #Funcion de entrenamiento
 def Entrenar(ruta_modelo, ruta_datos, tensorboard, continuarentrenamiento,
  lrperzonalizado, optimizador, lr, cambiarpropiedades):
     print("Modelo: {} | Optimizador: {} | LR: {} | TB: {} | Datos para ent: {}".format(ruta_modelo, optimizador, lr, tensorboard, ruta_datos))
 
-    if os.path.isdir(ruta_datos):
-        print("Buscando datos para entrenamiento")
-        archivos_encontrados = sorted([nombre_archivo for nombre_archivo
-                               in os.listdir(ruta_datos)
-                               if nombre_archivo.startswith(nombre_de_archivos.split("-")[0])
-                               and nombre_archivo.endswith(nombre_de_archivos.split(".")[1])])
-        if(len(archivos_encontrados)!=0):
-            print("Archivos encontrados:", len(archivos_encontrados))
-            archivos_encontrados = [ruta_datos + "/" + nombre for nombre in archivos_encontrados]
-            print(archivos_encontrados)
-        else:
-            print("No se encontraron archivos")
-            return
-    else:
-        print("Carpeta no encontrada")
+    try:
+        archivos_entrenamiento = BuscarArchivosEntrenamiento(ruta_datos)
+    except Exception as e:
+        print(e)
         return
 
-    datos_para_entrenamiento = np.load(archivos_encontrados[0])
+    datos_para_entrenamiento = np.load(archivos_entrenamiento[0])
 
     imagenes = np.array([dato[0] for dato in datos_para_entrenamiento])
     salidas = np.array([dato[1] for dato in datos_para_entrenamiento])
