@@ -8,7 +8,14 @@ import wx
 import gettext
 import entrenamiento
 import modelos
-import os
+import os, sys
+
+class Consola(wx.TextCtrl):
+    def __init__(self, *args, **kwds):
+        wx.TextCtrl.__init__(self, *args, **kwds)
+
+    def write(self, message):
+        self.WriteText(message)
 
 #Clase generada en wxGlade para la creacion de la ventana
 class Ventana(wx.Frame):
@@ -17,23 +24,23 @@ class Ventana(wx.Frame):
         # begin wxGlade: MyFrame.__init__
         kwds["style"] = wx.DEFAULT_FRAME_STYLE
         wx.Frame.__init__(self, *args, **kwds)
-        panelprincipal = wx.Panel(self)
-        self.checkboxContinuarEnt = wx.CheckBox(panelprincipal, wx.ID_ANY, "Continuar entrenamiento")
-        #self.intextRutaModelo = wx.TextCtrl(self, wx.ID_ANY, "Ruta del modelo")
-        self.intextRutaModelo = wx.FilePickerCtrl(panelprincipal,message="Ruta del modelo guardado", style=wx.FLP_USE_TEXTCTRL)
-        #self.intextRutaDatos = wx.TextCtrl(self, wx.ID_ANY, "Ruta de datos para entrenamiento")
-        self.intextRutaDatos = wx.DirPickerCtrl(panelprincipal,message="Ruta de los datos para entrenamiento", style=wx.FLP_USE_TEXTCTRL)
-        self.checkboxTensorboard = wx.CheckBox(panelprincipal, wx.ID_ANY, "Tensorboard")
+        self.panelprincipal = wx.Panel(self)
+        self.checkboxContinuarEnt = wx.CheckBox(self.panelprincipal, wx.ID_ANY, "Continuar entrenamiento")
+        self.intextRutaModelo = wx.FilePickerCtrl(self.panelprincipal,message="Ruta del modelo guardado", style=wx.FLP_USE_TEXTCTRL)
+        self.intextRutaDatos = wx.DirPickerCtrl(self.panelprincipal,message="Ruta de los datos para entrenamiento", style=wx.FLP_USE_TEXTCTRL)
+        self.checkboxTensorboard = wx.CheckBox(self.panelprincipal, wx.ID_ANY, "Tensorboard")
         self.checkboxTensorboard.SetValue(True)
-        self.checkboxCambiarPropiedades = wx.CheckBox(panelprincipal, wx.ID_ANY, "Cambiar propiedades")
-        self.radioADAM = wx.RadioButton(panelprincipal, wx.ID_ANY, "ADAM")
-        self.radioCGD = wx.RadioButton(panelprincipal, wx.ID_ANY, "CGD")
-        self.checkboxLRP = wx.CheckBox(panelprincipal, wx.ID_ANY, "LR personalizado")
-        self.intextLR = wx.TextCtrl(panelprincipal, wx.ID_ANY, "")
-        self.buttonEntrenar = wx.Button(panelprincipal, wx.ID_ANY, "Entrenar")
-        self.buttonCancelar = wx.Button(panelprincipal, wx.ID_ANY, "Cancelar")
-        self.textConsola = wx.StaticText(panelprincipal, wx.ID_ANY, "")
-        self.textRutaDatos = wx.StaticText(panelprincipal, wx.ID_ANY, "Carpeta de datos")
+        self.checkboxCambiarPropiedades = wx.CheckBox(self.panelprincipal, wx.ID_ANY, "Cambiar propiedades")
+        self.radioADAM = wx.RadioButton(self.panelprincipal, wx.ID_ANY, "ADAM")
+        self.radioCGD = wx.RadioButton(self.panelprincipal, wx.ID_ANY, "CGD")
+        self.checkboxLRP = wx.CheckBox(self.panelprincipal, wx.ID_ANY, "LR personalizado")
+        self.intextLR = wx.TextCtrl(self.panelprincipal, wx.ID_ANY, "")
+        self.buttonEntrenar = wx.Button(self.panelprincipal, wx.ID_ANY, "Entrenar")
+        self.buttonCancelar = wx.Button(self.panelprincipal, wx.ID_ANY, "Cancelar")
+        self.textConsola = Consola(self.panelprincipal, style=wx.TE_MULTILINE|wx.TE_READONLY|wx.HSCROLL)
+        sys.stdout = self.textConsola
+        sys.stderr = self.textConsola
+        self.textRutaDatos = wx.StaticText(self.panelprincipal, wx.ID_ANY, "Carpeta de datos")
         self.__set_properties()
         self.__do_layout()
 
@@ -56,7 +63,6 @@ class Ventana(wx.Frame):
         sizer_2 = wx.BoxSizer(wx.HORIZONTAL)
         sizer_8 = wx.BoxSizer(wx.HORIZONTAL)
         sizer_9 = wx.BoxSizer(wx.HORIZONTAL)
-        #textConsola = wx.StaticText(self, wx.ID_ANY, "")
         sizer_1.Add(self.textConsola, 1, wx.EXPAND, 0)
         sizer_2.Add(self.checkboxContinuarEnt, 0, 0, 0)
         sizer_2.Add(self.intextRutaModelo, 1, 0, 0)
@@ -78,7 +84,7 @@ class Ventana(wx.Frame):
         sizer_7.Add(self.buttonCancelar, 0, 0, 0)
         sizer_3.Add(sizer_7, 0, wx.EXPAND, 0)
         sizer_1.Add(sizer_3, 0, wx.EXPAND, 0)
-        self.SetSizer(sizer_1)
+        self.panelprincipal.SetSizer(sizer_1)
         self.Layout()
         self.SetSize((600, 500))
         self.checkboxCambiarPropiedades.Bind(wx.EVT_CHECKBOX, self.OnClickCheckBox)
@@ -135,7 +141,7 @@ def OnButtonCancelar(evnt):
     pass
 
 if __name__ == "__main__":
-    app = App(redirect=True)
+    app = App()
     app.ventana.buttonEntrenar.Bind(wx.EVT_BUTTON, OnButtonEntrenar)
     app.ventana.buttonCancelar.Bind(wx.EVT_BUTTON, OnButtonCancelar)
     app.MainLoop()

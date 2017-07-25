@@ -91,6 +91,7 @@ def Entrenar(ruta_modelo, ruta_datos, tensorboard, continuarentrenamiento,
         modelo = modelos.GenerarModelo(imagenes.shape[1],imagenes.shape[2],imagenes.shape[3],salidas.shape[1])
         print("Modelo generado correctamente")
 
+    
     modelo.save(os.path.join(ruta_datos, "modelo1.h5"))
 
 if __name__ == "__main__":
