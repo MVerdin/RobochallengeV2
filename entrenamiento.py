@@ -12,7 +12,7 @@ import entrenamientoGUI as egui
 import wx
 import tensorflow.contrib.keras as keras
 import modelos
-import os
+import os, time
 import numpy as np
 from random import shuffle
 contador=0
@@ -71,8 +71,12 @@ def Entrenar(ruta_modelo, ruta_datos, tensorboard, continuarentrenamiento,
         print(e)
         return
 
-    imagenes, salidas = CargarySepararArchivo(archivos_entrenamiento[0])
+    try:
+        imagenes, salidas = CargarySepararArchivo(archivos_entrenamiento[0])
 
+    except Exception as e:
+        print("Error al cargar archivo")
+        return
     if continuarentrenamiento:
         try:
             modelo = CargarModelo(ruta_modelo)
@@ -91,8 +95,11 @@ def Entrenar(ruta_modelo, ruta_datos, tensorboard, continuarentrenamiento,
         modelo = modelos.GenerarModelo(imagenes.shape[1],imagenes.shape[2],imagenes.shape[3],salidas.shape[1])
         print("Modelo generado correctamente")
 
-    
+
     modelo.save(os.path.join(ruta_datos, "modelo1.h5"))
 
+    time.sleep(5)
+    print("Entrenamiento terminado")
+    return
 if __name__ == "__main__":
     pass

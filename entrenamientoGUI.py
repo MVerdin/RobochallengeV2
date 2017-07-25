@@ -15,7 +15,9 @@ class Consola(wx.TextCtrl):
         wx.TextCtrl.__init__(self, *args, **kwds)
 
     def write(self, message):
-        self.WriteText(message)
+        wx.CallAfter(self.WriteText, message)
+#    def write(self, message):
+#        self.WriteText(message)
 
 #Clase generada en wxGlade para la creacion de la ventana
 class Ventana(wx.Frame):
@@ -106,34 +108,42 @@ class Ventana(wx.Frame):
                 lrperzonalizado, optimizador, lr, cambiarpropiedades)
 
     #Funcion que habilita o deshabilita los widgets dependiendo de las opciones seleccionadas
-    def HabilitarWidgets(self):
+    def HabilitarWidgets(self, entrenando):
         #self.buttonCancelar
-        #self.buttonEntrenar
-        #self.checkboxCambiarPropiedades
-        #self.checkboxContinuarEnt
-        self.checkboxLRP.Enable(self.checkboxCambiarPropiedades.GetValue())
-        #self.checkboxTensorboard
-        self.intextLR.Enable(self.checkboxLRP.GetValue() and self.checkboxCambiarPropiedades.GetValue())
-        #self.intextRutaDatos.Enable()
-        self.intextRutaModelo.Enable(self.checkboxContinuarEnt.GetValue())
-        self.radioCGD.Enable(self.checkboxCambiarPropiedades.GetValue())
-        self.radioADAM.Enable(self.checkboxCambiarPropiedades.GetValue())
+        self.buttonEntrenar.Enable(not entrenando)
+        self.buttonCancelar.Enable(entrenando)
+        self.checkboxCambiarPropiedades.Enable(not entrenando)
+        self.checkboxContinuarEnt.Enable(not entrenando)
+        self.checkboxLRP.Enable(self.checkboxCambiarPropiedades.GetValue() and not entrenando)
+        self.checkboxTensorboard.Enable(not entrenando)
+        self.intextLR.Enable(self.checkboxLRP.GetValue() and self.checkboxCambiarPropiedades.GetValue() and not entrenando)
+        self.intextRutaDatos.Enable(not entrenando)
+        self.intextRutaModelo.Enable(self.checkboxContinuarEnt.GetValue() and not entrenando)
+        self.radioCGD.Enable(self.checkboxCambiarPropiedades.GetValue() and not entrenando)
+        self.radioADAM.Enable(self.checkboxCambiarPropiedades.GetValue() and not entrenando)
 
     #Funcion callback relacionada a los checkbox de la ventana
     def OnClickCheckBox(self,evnt):
-        self.HabilitarWidgets()
+        self.HabilitarWidgets(entrenando = False)
 
 class App(wx.App):
     def OnInit(self):
         self.ventana = Ventana(None)
-        self.ventana.HabilitarWidgets()
+        self.ventana.HabilitarWidgets(entrenando = False)
         self.ventana.Show()
         return True
 
 
 #Funcion llamada por el boton "Entrenar"
 def OnButtonEntrenar(evnt):
-     entrenamiento.Entrenar(*app.ventana.ObtenerValores())
+    app.ventana.HabilitarWidgets(entrenando = True)
+    try:
+        entrenamiento.Entrenar(*app.ventana.ObtenerValores())
+    except Exception as e:
+        sys.stdout=sys.__stdout__
+        sys.stderr=sys.__stderr__
+        print (e)
+    app.ventana.HabilitarWidgets(entrenando = False)
 
 
 #Funcion llamada por el boton "Cancelar"
