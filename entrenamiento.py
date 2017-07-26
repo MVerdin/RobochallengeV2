@@ -64,11 +64,12 @@ def EntrenarModelo(modelo, ruta_guardar, imagenes, salidas, epochs, tensorboard)
     if tensorboard:
         modelo.fit(x=imagenes, y=salidas, epochs=epochs, callbacks = [keras.callbacks.TensorBoard()])
     else:
-        modelo.fit(x=imagenes, y=salidas, epochs=epochs, verbose = 2)
+        modelo.fit(x=imagenes, y=salidas, epochs=epochs)
     tiempo=datetime.datetime.today()
     modelo.save(os.path.join(ruta_guardar, "modelo-{}-{}-{}-{}.h5".
                              format(tiempo.date(),tiempo.hour,
                                     tiempo.minute,tiempo.second)))
+    print("modelo-{}-{}-{}-{}.h5 guardado".format(tiempo.date(),tiempo.hour,tiempo.minute,tiempo.second))
     return modelo
 #Funcion de entrenamiento
 def Entrenar(ruta_modelo, ruta_datos, tensorboard, continuarentrenamiento,
