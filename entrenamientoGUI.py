@@ -16,6 +16,8 @@ class Consola(wx.TextCtrl):
     #Metodo necesario para recibir los mensajes y mandarlos a la ventana
     def write(self, message):
         wx.CallAfter(self.WriteText, message)
+    def flush(self):
+        pass
 
 #Clase generada en wxGlade para la creacion de la ventana
 class Ventana(wx.Frame):

@@ -3,7 +3,7 @@
 #Punto de entrada para programa de entrenamiento
 #Abrir usando python 3
 #Dependecias necesarias:
-#tensorflow 1.1
+#tensorflow 1.2
 #wxPython 4
 #h5py
 #numpy
@@ -12,7 +12,7 @@
 #import wx
 import tensorflow.contrib.keras as keras
 import modelos
-import os, time
+import os, datetime
 import numpy as np
 from random import shuffle
 
@@ -60,6 +60,16 @@ def CargarySepararArchivo(ruta_archivo):
     salidas = np.array([dato[1] for dato in datos_para_entrenamiento])
     return imagenes, salidas
 
+def EntrenarModelo(modelo, ruta_guardar, imagenes, salidas, epochs, tensorboard):
+    if tensorboard:
+        modelo.fit(x=imagenes, y=salidas, epochs=epochs, callbacks = [keras.callbacks.TensorBoard()])
+    else:
+        modelo.fit(x=imagenes, y=salidas, epochs=epochs, verbose = 2)
+    tiempo=datetime.datetime.today()
+    modelo.save(os.path.join(ruta_guardar, "modelo-{}-{}-{}-{}.h5".
+                             format(tiempo.date(),tiempo.hour,
+                                    tiempo.minute,tiempo.second)))
+    return modelo
 #Funcion de entrenamiento
 def Entrenar(ruta_modelo, ruta_datos, tensorboard, continuarentrenamiento,
  lrperzonalizado, optimizador, lr, cambiarpropiedades, epochs):
@@ -123,9 +133,14 @@ def Entrenar(ruta_modelo, ruta_datos, tensorboard, continuarentrenamiento,
         else:
             print("Modelo compilado correctamente")
 
+    print("Empezando entrenamiento")
 
+    modelo = EntrenarModelo(modelo, ruta_datos, imagenes, salidas, epochs, tensorboard)
 
-    modelo.save(os.path.join(ruta_datos, "modeloPrueba.h5"))
+    for archivo in archivos_entrenamiento:
+        imagenes, salidas = CargarySepararArchivo(archivo)
+        modelo = EntrenarModelo(modelo, ruta_datos, imagenes, salidas, epochs, tensorboard)
+
     del modelo
     time.sleep(5)
     print("Entrenamiento terminado")
