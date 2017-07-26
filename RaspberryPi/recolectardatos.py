@@ -29,7 +29,7 @@ if __name__ == "__main__":
                     camera.capture(output, 'rgb',True)
                     tiempo=time.time()-starttime
                     fps=1/tiempo
-                    comando_actual=cbt.obtenerComando()
+                    comando_actual=np.array(cbt.obtenerComando())
                     datos_para_entrenamiento.append([output.array, comando_actual])
                     print(len(datos_para_entrenamiento), "CMD: ", comando_actual, "FPS: ",fps)
                     output.truncate(0)
