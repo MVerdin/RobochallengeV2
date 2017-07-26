@@ -15,7 +15,6 @@ import modelos
 import os, time
 import numpy as np
 from random import shuffle
-contador=0
 
 nombre_de_archivos='training_data-{0}.npy'
 
@@ -31,6 +30,7 @@ def CargarModelo(ruta):
     print("Abriendo archivo de modelo")
     if os.path.isfile(ruta):
         modelo = keras.models.load_model(ruta)
+        print("Modelo cargado correctamente")
     else:
         raise Exception("Archivo no encontrado")
     return modelo
@@ -75,6 +75,7 @@ def Entrenar(ruta_modelo, ruta_datos, tensorboard, continuarentrenamiento,
         imagenes, salidas = CargarySepararArchivo(archivos_entrenamiento[0])
 
     except Exception as e:
+        print(e)
         print("Error al cargar archivo")
         return
     if continuarentrenamiento:
@@ -97,7 +98,7 @@ def Entrenar(ruta_modelo, ruta_datos, tensorboard, continuarentrenamiento,
 
 
     modelo.save(os.path.join(ruta_datos, "modelo1.h5"))
-
+    del modelo
     time.sleep(5)
     print("Entrenamiento terminado")
     return

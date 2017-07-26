@@ -8,7 +8,7 @@ import wx
 import gettext
 import entrenamiento
 import modelos
-import os, sys
+import os, sys, threading
 
 class Consola(wx.TextCtrl):
     def __init__(self, *args, **kwds):
@@ -24,7 +24,7 @@ class Ventana(wx.Frame):
     #Creacion de componentes de la ventana
     def __init__(self, *args, **kwds):
         # begin wxGlade: MyFrame.__init__
-        kwds["style"] = wx.DEFAULT_FRAME_STYLE
+        kwds["style"] = wx.MINIMIZE_BOX | wx.MAXIMIZE_BOX  | wx.SYSTEM_MENU | wx.CAPTION | wx.CLOSE_BOX
         wx.Frame.__init__(self, *args, **kwds)
         self.panelprincipal = wx.Panel(self)
         self.checkboxContinuarEnt = wx.CheckBox(self.panelprincipal, wx.ID_ANY, "Continuar entrenamiento")
@@ -40,8 +40,8 @@ class Ventana(wx.Frame):
         self.buttonEntrenar = wx.Button(self.panelprincipal, wx.ID_ANY, "Entrenar")
         self.buttonCancelar = wx.Button(self.panelprincipal, wx.ID_ANY, "Cancelar")
         self.textConsola = Consola(self.panelprincipal, style=wx.TE_MULTILINE|wx.TE_READONLY|wx.HSCROLL)
-        sys.stdout = self.textConsola
-        sys.stderr = self.textConsola
+        #sys.stdout = self.textConsola
+        #sys.stderr = self.textConsola
         self.textRutaDatos = wx.StaticText(self.panelprincipal, wx.ID_ANY, "Carpeta de datos")
         self.__set_properties()
         self.__do_layout()
@@ -51,6 +51,7 @@ class Ventana(wx.Frame):
         # begin wxGlade: MyFrame.__set_properties
         self.SetTitle("Entrenamiento")
         self.SetSize((600, 500))
+
         # end wxGlade
 
     #Acomodo de los widgets
@@ -136,8 +137,11 @@ class App(wx.App):
 
 #Funcion llamada por el boton "Entrenar"
 def OnButtonEntrenar(evnt):
+    #thread = threading.Thread(target=entrenamiento.Entrenar, args=(app.ventana.ObtenerValores()))
     app.ventana.HabilitarWidgets(entrenando = True)
     try:
+        #thread.start()
+        #thread.join()
         entrenamiento.Entrenar(*app.ventana.ObtenerValores())
     except Exception as e:
         sys.stdout=sys.__stdout__
