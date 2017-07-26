@@ -32,7 +32,7 @@ class Ventana(wx.Frame):
         self.checkboxTensorboard.SetValue(True)
         self.checkboxCambiarPropiedades = wx.CheckBox(self.panelprincipal, wx.ID_ANY, "Cambiar propiedades")
         self.radioADAM = wx.RadioButton(self.panelprincipal, wx.ID_ANY, "ADAM")
-        self.radioCGD = wx.RadioButton(self.panelprincipal, wx.ID_ANY, "CGD")
+        self.radioCGD = wx.RadioButton(self.panelprincipal, wx.ID_ANY, "SGD")
         self.checkboxLRP = wx.CheckBox(self.panelprincipal, wx.ID_ANY, "LR personalizado")
         self.intextLR = wx.TextCtrl(self.panelprincipal, wx.ID_ANY, "")
         self.buttonEntrenar = wx.Button(self.panelprincipal, wx.ID_ANY, "Entrenar")
@@ -100,7 +100,7 @@ class Ventana(wx.Frame):
         tensorboard = self.checkboxTensorboard.GetValue()
         continuarentrenamiento=self.checkboxContinuarEnt.GetValue()
         lrperzonalizado = self.checkboxLRP.GetValue()
-        optimizador = "adam" if self.radioADAM.GetValue() else "cgd"
+        optimizador = "adam" if self.radioADAM.GetValue() else "sgd"
         lr = self.intextLR.GetValue()
         cambiarpropiedades = self.checkboxCambiarPropiedades.GetValue()
         return (ruta_modelo, ruta_datos, tensorboard, continuarentrenamiento,
