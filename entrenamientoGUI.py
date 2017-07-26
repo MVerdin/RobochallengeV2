@@ -22,7 +22,7 @@ class Ventana(wx.Frame):
     #Creacion de componentes de la ventana
     def __init__(self, *args, **kwds):
         # begin wxGlade: MyFrame.__init__
-        kwds["style"] = wx.MINIMIZE_BOX | wx.MAXIMIZE_BOX  | wx.SYSTEM_MENU | wx.CAPTION | wx.CLOSE_BOX
+        kwds["style"] = wx.MINIMIZE_BOX | wx.MAXIMIZE_BOX  | wx.SYSTEM_MENU | wx.CAPTION | wx.CLOSE_BOX | wx.RESIZE_BORDER
         wx.Frame.__init__(self, *args, **kwds)
         self.panelprincipal = wx.Panel(self)
         self.checkboxContinuarEnt = wx.CheckBox(self.panelprincipal, wx.ID_ANY, "Continuar entrenamiento")
@@ -35,12 +35,14 @@ class Ventana(wx.Frame):
         self.radioCGD = wx.RadioButton(self.panelprincipal, wx.ID_ANY, "SGD")
         self.checkboxLRP = wx.CheckBox(self.panelprincipal, wx.ID_ANY, "LR personalizado")
         self.intextLR = wx.TextCtrl(self.panelprincipal, wx.ID_ANY, "")
+        self.selectorEpochs = wx.SpinCtrlDouble(self.panelprincipal,wx.ID_ANY,initial=1)
         self.buttonEntrenar = wx.Button(self.panelprincipal, wx.ID_ANY, "Entrenar")
         self.buttonCancelar = wx.Button(self.panelprincipal, wx.ID_ANY, "Cancelar")
         self.textConsola = Consola(self.panelprincipal, style=wx.TE_MULTILINE|wx.TE_READONLY|wx.HSCROLL)
         sys.stdout = self.textConsola #Redireccion de mensajes a GUI
         sys.stderr = self.textConsola #Redireccion de errores a GUI
-        self.textRutaDatos = wx.StaticText(self.panelprincipal, wx.ID_ANY, "Carpeta de datos")
+        self.etiquetaRutaDatos = wx.StaticText(self.panelprincipal, wx.ID_ANY, "Carpeta de datos")
+        self.etiquetaNumeroEpochs = wx.StaticText(self.panelprincipal, wx.ID_ANY, "Numero de epochs")
         self.__set_properties()
         self.__do_layout()
 
@@ -64,13 +66,17 @@ class Ventana(wx.Frame):
         sizer_2 = wx.BoxSizer(wx.HORIZONTAL)
         sizer_8 = wx.BoxSizer(wx.HORIZONTAL)
         sizer_9 = wx.BoxSizer(wx.HORIZONTAL)
+        sizer_10 = wx.BoxSizer(wx.HORIZONTAL)
         sizer_1.Add(self.textConsola, 1, wx.EXPAND, 0)
         sizer_2.Add(self.checkboxContinuarEnt, 0, 0, 0)
         sizer_2.Add(self.intextRutaModelo, 1, 0, 0)
         sizer_1.Add(sizer_2, 0, wx.EXPAND, 0)
         sizer_1.Add(sizer_8, 0, wx.EXPAND, 0)
-        sizer_8.Add(self.textRutaDatos, 0, 0, 0)
+        sizer_1.Add(sizer_10, 0, wx.EXPAND, 0)
+        sizer_8.Add(self.etiquetaRutaDatos, 0, 0, 0)
         sizer_8.Add(self.intextRutaDatos, 1, 0, 0)
+        sizer_10.Add(self.etiquetaNumeroEpochs, 0, 0, 0)
+        sizer_10.Add(self.selectorEpochs, 1, 0, 0)
         sizer_9.Add(self.checkboxTensorboard, 1, 0, 0)
         sizer_9.Add(self.checkboxCambiarPropiedades, 1, 0, 0)
         sizer_4.Add(sizer_9, 0, wx.EXPAND, 0)
@@ -103,8 +109,9 @@ class Ventana(wx.Frame):
         optimizador = "adam" if self.radioADAM.GetValue() else "sgd"
         lr = self.intextLR.GetValue()
         cambiarpropiedades = self.checkboxCambiarPropiedades.GetValue()
+        epochs = self.selectorEpochs.GetValue()
         return (ruta_modelo, ruta_datos, tensorboard, continuarentrenamiento,
-                lrperzonalizado, optimizador, lr, cambiarpropiedades)
+                lrperzonalizado, optimizador, lr, cambiarpropiedades, int(epochs))
 
     #Funcion que habilita o deshabilita los widgets dependiendo de las opciones seleccionadas
     def HabilitarWidgets(self, entrenando):

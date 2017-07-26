@@ -62,15 +62,15 @@ def CargarySepararArchivo(ruta_archivo):
 
 #Funcion de entrenamiento
 def Entrenar(ruta_modelo, ruta_datos, tensorboard, continuarentrenamiento,
- lrperzonalizado, optimizador, lr, cambiarpropiedades):
+ lrperzonalizado, optimizador, lr, cambiarpropiedades, epochs):
     def Limpiar():
         keras.backend.clear_session()
 
-    print("Modelo: {} | Optimizador: {} | LR: {} | TB: {} | Datos para ent: {}"
+    print("Modelo: {} | Optimizador: {} | LR: {} | TB: {} | Datos para ent: {} | Epochs: {}"
           .format(ruta_modelo if continuarentrenamiento else "Nuevo",
                   optimizador if cambiarpropiedades else "Sin modificar",
                   lr if lrperzonalizado else "Sin modificar",
-                  tensorboard, ruta_datos))
+                  tensorboard, ruta_datos, epochs))
 
     try:
         archivos_entrenamiento = BuscarArchivosEntrenamiento(ruta_datos)
@@ -124,7 +124,7 @@ def Entrenar(ruta_modelo, ruta_datos, tensorboard, continuarentrenamiento,
             print("Modelo compilado correctamente")
 
 
-    
+
     modelo.save(os.path.join(ruta_datos, "modeloPrueba.h5"))
     del modelo
     time.sleep(5)
