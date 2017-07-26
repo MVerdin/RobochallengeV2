@@ -97,8 +97,9 @@ def Entrenar(ruta_modelo, ruta_datos, tensorboard, continuarentrenamiento,
         print("Modelo generado correctamente")
 
 
-    modelo.save(os.path.join(ruta_datos, "modelo1.h5"))
+    modelo.save(os.path.join(ruta_datos, "modeloPrueba.h5"))
     del modelo
+    keras.backend.clear_session()
     time.sleep(5)
     print("Entrenamiento terminado")
     return
