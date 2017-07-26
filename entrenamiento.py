@@ -62,9 +62,9 @@ def CargarySepararArchivo(ruta_archivo):
 
 def EntrenarModelo(modelo, ruta_guardar, imagenes, salidas, epochs, tensorboard):
     if tensorboard:
-        modelo.fit(x=imagenes, y=salidas, epochs=epochs, callbacks = [keras.callbacks.TensorBoard()])
+        modelo.fit(x=imagenes, y=salidas, epochs=epochs, validation_split=0.01, callbacks = [keras.callbacks.TensorBoard()], )
     else:
-        modelo.fit(x=imagenes, y=salidas, epochs=epochs)
+        modelo.fit(x=imagenes, y=salidas, epochs=epochs, validation_split=0.01)
     tiempo=datetime.datetime.today()
     modelo.save(os.path.join(ruta_guardar, "modelo-{}-{}-{}-{}.h5".
                              format(tiempo.date(),tiempo.hour,
@@ -124,11 +124,11 @@ def Entrenar(ruta_modelo, ruta_datos, tensorboard, continuarentrenamiento,
         try:
             if lrperzonalizado:
                 if optimizador == "adam":
-                    modelo.compile(optimizer=keras.optimizers.Adam(lr=lr),loss="categorical_crossentropy")
+                    modelo.compile(optimizer=keras.optimizers.Adam(lr=lr),loss="categorical_crossentropy",metrics=['accuracy'])
                 elif optimizador == "sgd":
-                    modelo.compile(optimizer=keras.optimizers.SGD(lr=lr),loss="categorical_crossentropy")
+                    modelo.compile(optimizer=keras.optimizers.SGD(lr=lr),loss="categorical_crossentropy",metrics=['accuracy'])
             else:
-                modelo.compile(optimizer=optimizador,loss="categorical_crossentropy")
+                modelo.compile(optimizer=optimizador,loss="categorical_crossentropy",metrics=['accuracy'])
         except Exception as e:
             print("Error compilando modelo")
         else:

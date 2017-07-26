@@ -27,7 +27,7 @@ def GenerarModelo(altoimg,anchoimg,canalesimg,clases):
 
     modelo = keras.models.Model(inputs=entradaImagen, outputs = out)
 
-    modelo.compile(optimizer="adam",loss="categorical_crossentropy")
+    modelo.compile(optimizer="adam",loss="categorical_crossentropy",metrics=['accuracy'])
     return modelo
 
 
