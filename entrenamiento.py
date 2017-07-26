@@ -8,8 +8,8 @@
 #h5py
 #numpy
 
-import entrenamientoGUI as egui
-import wx
+#import entrenamientoGUI as egui
+#import wx
 import tensorflow.contrib.keras as keras
 import modelos
 import os, time
@@ -63,13 +63,21 @@ def CargarySepararArchivo(ruta_archivo):
 #Funcion de entrenamiento
 def Entrenar(ruta_modelo, ruta_datos, tensorboard, continuarentrenamiento,
  lrperzonalizado, optimizador, lr, cambiarpropiedades):
-    print("Modelo: {} | Optimizador: {} | LR: {} | TB: {} | Datos para ent: {}".format(ruta_modelo, optimizador, lr, tensorboard, ruta_datos))
+    def Limpiar():
+        keras.backend.clear_session()
+
+    print("Modelo: {} | Optimizador: {} | LR: {} | TB: {} | Datos para ent: {}"
+          .format(ruta_modelo if continuarentrenamiento else "Nuevo",
+                  optimizador if cambiarpropiedades else "Sin modificar",
+                  lr if lrperzonalizado else "Sin modificar",
+                  tensorboard, ruta_datos))
 
     try:
         archivos_entrenamiento = BuscarArchivosEntrenamiento(ruta_datos)
     except Exception as e:
         print(e)
-        return
+        Limpiar()
+        return False
 
     try:
         imagenes, salidas = CargarySepararArchivo(archivos_entrenamiento[0])
@@ -77,31 +85,51 @@ def Entrenar(ruta_modelo, ruta_datos, tensorboard, continuarentrenamiento,
     except Exception as e:
         print(e)
         print("Error al cargar archivo")
-        return
+        Limpiar()
+        return False
+
     if continuarentrenamiento:
         try:
             modelo = CargarModelo(ruta_modelo)
         except Exception as e:
             print(e)
-            return
+            Limpiar()
+            return False
 
         if (VerificarDimensiones(modelo,imagenes,salidas)):
             print("Dimensiones correctas")
         else:
             print("Las dimesiones del modelo no coinciden con las dimensiones de los datos")
-            return
+            Limpiar()
+            return False
 
     else:
-        print("Generando modelo")
+        print("Generando modelo nuevo")
         modelo = modelos.GenerarModelo(imagenes.shape[1],imagenes.shape[2],imagenes.shape[3],salidas.shape[1])
         print("Modelo generado correctamente")
 
+    if cambiarpropiedades:
+        print("Compilando modelo")
+        try:
+            if lrperzonalizado:
+                if optimizador == "adam":
+                    modelo.compile(optimizer=keras.optimizers.Adam(lr=lr),loss="categorical_crossentropy")
+                elif optimizador == "sgd":
+                    modelo.compile(optimizer=keras.optimizers.SGD(lr=lr),loss="categorical_crossentropy")
+            else:
+                modelo.compile(optimizer=optimizador,loss="categorical_crossentropy")
+        except Exception as e:
+            print("Error compilando modelo")
+        else:
+            print("Modelo compilado correctamente")
 
+
+    
     modelo.save(os.path.join(ruta_datos, "modeloPrueba.h5"))
     del modelo
-    keras.backend.clear_session()
     time.sleep(5)
     print("Entrenamiento terminado")
-    return
+    Limpiar()
+    return True
 if __name__ == "__main__":
     pass
