@@ -58,9 +58,9 @@ class Ventana(wx.Frame):
         sys.stderr = self.textConsola #Redireccion de errores a GUI
         self.etiquetaRutaDatos = wx.StaticText(self.panelprincipal, wx.ID_ANY, "Carpeta de datos")
         self.etiquetaNumeroEpochs = wx.StaticText(self.panelprincipal, wx.ID_ANY, "Numero de epochs")
-        self.Bind(entrenamiento.EVT_ENTRENAMIENTO, self.OnEntrenamiento)
         self.__set_properties()
         self.__do_layout()
+        self.__do_binding()
 
     #Configuracion de la ventana
     def __set_properties(self):
@@ -110,10 +110,17 @@ class Ventana(wx.Frame):
         self.panelprincipal.SetSizer(sizer_1)
         self.Layout()
         self.SetSize((600, 500))
+
+        # end wxGlade
+
+
+    def __do_binding(self):
         self.checkboxCambiarPropiedades.Bind(wx.EVT_CHECKBOX, self.OnClickCheckBox)
         self.checkboxContinuarEnt.Bind(wx.EVT_CHECKBOX, self.OnClickCheckBox)
         self.checkboxLRP.Bind(wx.EVT_CHECKBOX, self.OnClickCheckBox)
-        # end wxGlade
+        self.buttonEntrenar.Bind(wx.EVT_BUTTON, self.OnButtonEntrenar)
+        self.buttonCancelar.Bind(wx.EVT_BUTTON, self.OnButtonCancelar)
+        self.Bind(entrenamiento.EVT_ENTRENAMIENTO, self.OnEntrenamiento)
 
     #Funcion que lee los valores introducidos en los widgets
     def ObtenerValores(self):
@@ -147,10 +154,32 @@ class Ventana(wx.Frame):
     def OnClickCheckBox(self,evnt):
         self.HabilitarWidgets(entrenando = False)
 
+
     def OnEntrenamiento(self,evnt):
         self.HabilitarWidgets(entrenando = evnt.GetValue())
         #print("Evento recibido")
         #print(evnt)
+
+    #Funcion llamada por el boton "Entrenar"
+    def OnButtonEntrenar(self,evnt):
+        #Creacion de hilo que evita que la GUI se bloquee en el proceso de entrenamiento
+        thread = threading.Thread(target=entrenamiento.Entrenar, args=(*app.ventana.ObtenerValores(), self))
+        #app.ventana.HabilitarWidgets(entrenando = True)
+        try:
+            thread.start()
+            #entrenamiento.Entrenar(*app.ventana.ObtenerValores())
+        except Exception as e:
+            sys.stdout=sys.__stdout__ #Restauracion del canal de salida estandar
+            sys.stderr=sys.__stderr__ #Restauracion del canal de errores estandar
+            print (e)
+        #app.ventana.HabilitarWidgets(entrenando = False)
+
+    #Funcion llamada por el boton "Cancelar"
+    def OnButtonCancelar(self,evnt):
+        #app.ventana.HabilitarWidgets(entrenando = False)
+        print("Cancelando")
+        entrenamiento.Limpiar(self)
+
 
 class App(wx.App):
     def OnInit(self):
@@ -159,33 +188,6 @@ class App(wx.App):
         self.ventana.Show()
         return True
 
-
-#Funcion llamada por el boton "Entrenar"
-def OnButtonEntrenar(evnt):
-    #Creacion de hilo que evita que la GUI se bloquee en el proceso de entrenamiento
-    thread = threading.Thread(target=entrenamiento.Entrenar, args=(*app.ventana.ObtenerValores(), app.ventana))
-    #app.ventana.HabilitarWidgets(entrenando = True)
-    try:
-        thread.start()
-        #entrenamiento.Entrenar(*app.ventana.ObtenerValores())
-    except Exception as e:
-        sys.stdout=sys.__stdout__ #Restauracion del canal de salida estandar
-        sys.stderr=sys.__stderr__ #Restauracion del canal de errores estandar
-        print (e)
-    #app.ventana.HabilitarWidgets(entrenando = False)
-    return
-
-
-#Funcion llamada por el boton "Cancelar"
-def OnButtonCancelar(evnt):
-    #app.ventana.HabilitarWidgets(entrenando = False)
-    print("Cancelando")
-    entrenamiento.Limpiar(app.ventana)
-
-
-
 if __name__ == "__main__":
     app = App(redirect=False)
-    app.ventana.buttonEntrenar.Bind(wx.EVT_BUTTON, OnButtonEntrenar)
-    app.ventana.buttonCancelar.Bind(wx.EVT_BUTTON, OnButtonCancelar)
     app.MainLoop()

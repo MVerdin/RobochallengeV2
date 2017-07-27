@@ -12,7 +12,7 @@
 #import wx
 import tensorflow.contrib.keras as keras
 import modelos
-import os, datetime
+import os, datetime, time
 import numpy as np
 from random import shuffle
 if __name__ != "__main__":
@@ -20,6 +20,7 @@ if __name__ != "__main__":
     import entrenamientoGUI as gui
     myEVT_ENTRENAMIENTO = wx.NewEventType()
     EVT_ENTRENAMIENTO = wx.PyEventBinder(myEVT_ENTRENAMIENTO, 1)
+
 nombre_de_archivos='training_data-{0}.npy'
 
 def VerificarDimensiones(modelo, loteimagenes, lotesalidas):
@@ -38,6 +39,7 @@ def CargarModelo(ruta):
     else:
         raise Exception("Archivo no encontrado")
     return modelo
+
 
 def BuscarArchivosEntrenamiento(ruta):
     if os.path.isdir(ruta):
@@ -58,11 +60,13 @@ def BuscarArchivosEntrenamiento(ruta):
     else:
         raise Exception("Carpeta no encontrada")
 
+
 def CargarySepararArchivo(ruta_archivo):
     datos_para_entrenamiento = np.load(ruta_archivo)
     imagenes = np.array([dato[0] for dato in datos_para_entrenamiento])
     salidas = np.array([dato[1] for dato in datos_para_entrenamiento])
     return imagenes, salidas
+
 
 def EntrenarModelo(modelo, ruta_guardar, imagenes, salidas, epochs, tensorboard):
     if tensorboard:
@@ -76,11 +80,13 @@ def EntrenarModelo(modelo, ruta_guardar, imagenes, salidas, epochs, tensorboard)
     print("modelo-{}-{}-{}-{}.h5 guardado".format(tiempo.date(),tiempo.hour,tiempo.minute,tiempo.second))
     return modelo
 
+
 def Limpiar(ventana):
     keras.backend.clear_session()
     if __name__ != "__main__":
         evnt = gui.EntEvent(myEVT_ENTRENAMIENTO, 1, False)
         wx.PostEvent(ventana, evnt)
+
 #Funcion de entrenamiento
 def Entrenar(ruta_modelo, ruta_datos, tensorboard, continuarentrenamiento,
  lrperzonalizado, optimizador, lr, cambiarpropiedades, epochs, ventana):
@@ -155,7 +161,7 @@ def Entrenar(ruta_modelo, ruta_datos, tensorboard, continuarentrenamiento,
 
     modelo = EntrenarModelo(modelo, ruta_datos, imagenes, salidas, epochs, tensorboard)
 
-    for archivo in archivos_entrenamiento:
+    for archivo in archivos_entrenamiento[1:]:
         imagenes, salidas = CargarySepararArchivo(archivo)
         modelo = EntrenarModelo(modelo, ruta_datos, imagenes, salidas, epochs, tensorboard)
 
@@ -165,5 +171,7 @@ def Entrenar(ruta_modelo, ruta_datos, tensorboard, continuarentrenamiento,
     print("Entrenamiento terminado")
     Limpiar(ventana)
     return True
+
+
 if __name__ == "__main__":
     pass
