@@ -71,11 +71,13 @@ def EntrenarModelo(modelo, ruta_guardar, imagenes, salidas, epochs, tensorboard)
                                     tiempo.minute,tiempo.second)))
     print("modelo-{}-{}-{}-{}.h5 guardado".format(tiempo.date(),tiempo.hour,tiempo.minute,tiempo.second))
     return modelo
+
+def Limpiar():
+    keras.backend.clear_session()
 #Funcion de entrenamiento
 def Entrenar(ruta_modelo, ruta_datos, tensorboard, continuarentrenamiento,
  lrperzonalizado, optimizador, lr, cambiarpropiedades, epochs):
-    def Limpiar():
-        keras.backend.clear_session()
+
 
     print("Modelo: {} | Optimizador: {} | LR: {} | TB: {} | Datos para ent: {} | Epochs: {}"
           .format(ruta_modelo if continuarentrenamiento else "Nuevo",
@@ -142,7 +144,7 @@ def Entrenar(ruta_modelo, ruta_datos, tensorboard, continuarentrenamiento,
         imagenes, salidas = CargarySepararArchivo(archivo)
         modelo = EntrenarModelo(modelo, ruta_datos, imagenes, salidas, epochs, tensorboard)
 
-    modelo.save(os.path.join(ruta_datos, "modelo-final.h5")
+    modelo.save(os.path.join(ruta_datos, "modelo-final.h5"))
     del modelo
     time.sleep(5)
     print("Entrenamiento terminado")

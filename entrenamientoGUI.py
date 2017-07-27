@@ -160,6 +160,7 @@ def OnButtonEntrenar(evnt):
 #Funcion llamada por el boton "Cancelar"
 def OnButtonCancelar(evnt):
     app.ventana.HabilitarWidgets(entrenando = False)
+    entrenamiento.Limpiar()
 
 if __name__ == "__main__":
     app = App(redirect=False)
