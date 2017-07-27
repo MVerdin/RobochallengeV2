@@ -19,6 +19,19 @@ class Consola(wx.TextCtrl):
     def flush(self):
         pass
 
+
+class EntEvent(wx.PyCommandEvent):
+    def __init__(self, etype, eid, Entrenando=None):
+        """Creates the event object"""
+        wx.PyCommandEvent.__init__(self, etype, eid)
+        self._Entrenando = Entrenando
+
+    def GetValue(self):
+        """Returns the value from the event.
+        @return: the value of this event
+        """
+        return self._Entrenando
+
 #Clase generada en wxGlade para la creacion de la ventana
 class Ventana(wx.Frame):
     #Creacion de componentes de la ventana
@@ -45,6 +58,7 @@ class Ventana(wx.Frame):
         sys.stderr = self.textConsola #Redireccion de errores a GUI
         self.etiquetaRutaDatos = wx.StaticText(self.panelprincipal, wx.ID_ANY, "Carpeta de datos")
         self.etiquetaNumeroEpochs = wx.StaticText(self.panelprincipal, wx.ID_ANY, "Numero de epochs")
+        self.Bind(entrenamiento.EVT_ENTRENAMIENTO, self.OnEntrenamiento)
         self.__set_properties()
         self.__do_layout()
 
@@ -133,6 +147,11 @@ class Ventana(wx.Frame):
     def OnClickCheckBox(self,evnt):
         self.HabilitarWidgets(entrenando = False)
 
+    def OnEntrenamiento(self,evnt):
+        self.HabilitarWidgets(entrenando = evnt.GetValue())
+        #print("Evento recibido")
+        #print(evnt)
+
 class App(wx.App):
     def OnInit(self):
         self.ventana = Ventana(None)
@@ -144,8 +163,8 @@ class App(wx.App):
 #Funcion llamada por el boton "Entrenar"
 def OnButtonEntrenar(evnt):
     #Creacion de hilo que evita que la GUI se bloquee en el proceso de entrenamiento
-    thread = threading.Thread(target=entrenamiento.Entrenar, args=(app.ventana.ObtenerValores()))
-    app.ventana.HabilitarWidgets(entrenando = True)
+    thread = threading.Thread(target=entrenamiento.Entrenar, args=(*app.ventana.ObtenerValores(), app.ventana))
+    #app.ventana.HabilitarWidgets(entrenando = True)
     try:
         thread.start()
         #entrenamiento.Entrenar(*app.ventana.ObtenerValores())
@@ -159,8 +178,11 @@ def OnButtonEntrenar(evnt):
 
 #Funcion llamada por el boton "Cancelar"
 def OnButtonCancelar(evnt):
-    app.ventana.HabilitarWidgets(entrenando = False)
-    entrenamiento.Limpiar()
+    #app.ventana.HabilitarWidgets(entrenando = False)
+    print("Cancelando")
+    entrenamiento.Limpiar(app.ventana)
+
+
 
 if __name__ == "__main__":
     app = App(redirect=False)

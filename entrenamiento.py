@@ -15,7 +15,11 @@ import modelos
 import os, datetime
 import numpy as np
 from random import shuffle
-
+if __name__ != "__main__":
+    import wx
+    import entrenamientoGUI as gui
+    myEVT_ENTRENAMIENTO = wx.NewEventType()
+    EVT_ENTRENAMIENTO = wx.PyEventBinder(myEVT_ENTRENAMIENTO, 1)
 nombre_de_archivos='training_data-{0}.npy'
 
 def VerificarDimensiones(modelo, loteimagenes, lotesalidas):
@@ -72,11 +76,14 @@ def EntrenarModelo(modelo, ruta_guardar, imagenes, salidas, epochs, tensorboard)
     print("modelo-{}-{}-{}-{}.h5 guardado".format(tiempo.date(),tiempo.hour,tiempo.minute,tiempo.second))
     return modelo
 
-def Limpiar():
+def Limpiar(ventana):
     keras.backend.clear_session()
+    if __name__ != "__main__":
+        evnt = gui.EntEvent(myEVT_ENTRENAMIENTO, 1, False)
+        wx.PostEvent(ventana, evnt)
 #Funcion de entrenamiento
 def Entrenar(ruta_modelo, ruta_datos, tensorboard, continuarentrenamiento,
- lrperzonalizado, optimizador, lr, cambiarpropiedades, epochs):
+ lrperzonalizado, optimizador, lr, cambiarpropiedades, epochs, ventana):
 
 
     print("Modelo: {} | Optimizador: {} | LR: {} | TB: {} | Datos para ent: {} | Epochs: {}"
@@ -84,12 +91,16 @@ def Entrenar(ruta_modelo, ruta_datos, tensorboard, continuarentrenamiento,
                   optimizador if cambiarpropiedades else "Sin modificar",
                   lr if lrperzonalizado else "Sin modificar",
                   tensorboard, ruta_datos, epochs))
+    keras.backend.clear_session()
+    if __name__ != "__main__":
+        evnt = gui.EntEvent(myEVT_ENTRENAMIENTO, 1, True)
+        wx.PostEvent(ventana, evnt)
 
     try:
         archivos_entrenamiento = BuscarArchivosEntrenamiento(ruta_datos)
     except Exception as e:
         print(e)
-        Limpiar()
+        Limpiar(ventana)
         return False
 
     try:
@@ -98,7 +109,7 @@ def Entrenar(ruta_modelo, ruta_datos, tensorboard, continuarentrenamiento,
     except Exception as e:
         print(e)
         print("Error al cargar archivo")
-        Limpiar()
+        Limpiar(ventana)
         return False
 
     if continuarentrenamiento:
@@ -106,14 +117,14 @@ def Entrenar(ruta_modelo, ruta_datos, tensorboard, continuarentrenamiento,
             modelo = CargarModelo(ruta_modelo)
         except Exception as e:
             print(e)
-            Limpiar()
+            Limpiar(ventana)
             return False
 
         if (VerificarDimensiones(modelo,imagenes,salidas)):
             print("Dimensiones correctas")
         else:
             print("Las dimesiones del modelo no coinciden con las dimensiones de los datos")
-            Limpiar()
+            Limpiar(ventana)
             return False
 
     else:
@@ -132,7 +143,11 @@ def Entrenar(ruta_modelo, ruta_datos, tensorboard, continuarentrenamiento,
             else:
                 modelo.compile(optimizer=optimizador,loss="categorical_crossentropy",metrics=['accuracy'])
         except Exception as e:
+            print(e)
             print("Error compilando modelo")
+            Limpiar(ventana)
+            return 0
+
         else:
             print("Modelo compilado correctamente")
 
@@ -148,7 +163,7 @@ def Entrenar(ruta_modelo, ruta_datos, tensorboard, continuarentrenamiento,
     del modelo
     time.sleep(5)
     print("Entrenamiento terminado")
-    Limpiar()
+    Limpiar(ventana)
     return True
 if __name__ == "__main__":
     pass
