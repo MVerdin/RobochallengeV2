@@ -142,6 +142,7 @@ def Entrenar(ruta_modelo, ruta_datos, tensorboard, continuarentrenamiento,
         imagenes, salidas = CargarySepararArchivo(archivo)
         modelo = EntrenarModelo(modelo, ruta_datos, imagenes, salidas, epochs, tensorboard)
 
+    modelo.save(os.path.join(ruta_datos, "modelo-final.h5")
     del modelo
     time.sleep(5)
     print("Entrenamiento terminado")
