@@ -162,10 +162,10 @@ class Ventana(wx.Frame):
 
     #Funcion llamada por el boton "Entrenar"
     def OnButtonEntrenar(self,evnt):
-        #Creacion de hilo que evita que la GUI se bloquee en el proceso de entrenamiento
-        thread = threading.Thread(target=entrenamiento.Entrenar, args=(*app.ventana.ObtenerValores(), self))
         #app.ventana.HabilitarWidgets(entrenando = True)
         try:
+            #Creacion de hilo que evita que la GUI se bloquee en el proceso de entrenamiento
+            thread = threading.Thread(target=entrenamiento.Entrenar, args=(*app.ventana.ObtenerValores(), self))
             thread.start()
             #entrenamiento.Entrenar(*app.ventana.ObtenerValores())
         except Exception as e:

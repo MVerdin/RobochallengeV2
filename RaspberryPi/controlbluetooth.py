@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 from bluetooth import *
 import threading
 import sys

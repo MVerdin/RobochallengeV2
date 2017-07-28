@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 import controlbluetooth as cbt
 import time, os
 import picamera

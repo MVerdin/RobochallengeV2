@@ -143,9 +143,9 @@ def Entrenar(ruta_modelo, ruta_datos, tensorboard, continuarentrenamiento,
         try:
             if lrperzonalizado:
                 if optimizador == "adam":
-                    modelo.compile(optimizer=keras.optimizers.Adam(lr=lr),loss="categorical_crossentropy",metrics=['accuracy'])
+                    modelo.compile(optimizer=keras.optimizers.Adam(lr=float(lr)),loss="categorical_crossentropy",metrics=['accuracy'])
                 elif optimizador == "sgd":
-                    modelo.compile(optimizer=keras.optimizers.SGD(lr=lr),loss="categorical_crossentropy",metrics=['accuracy'])
+                    modelo.compile(optimizer=keras.optimizers.SGD(lr=float(lr)),loss="categorical_crossentropy",metrics=['accuracy'])
             else:
                 modelo.compile(optimizer=optimizador,loss="categorical_crossentropy",metrics=['accuracy'])
         except Exception as e:
