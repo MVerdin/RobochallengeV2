@@ -1,34 +1,22 @@
 #!/usr/bin/env python3
+import sys, os
+sys.path.insert(len(sys.path), os.path.abspath(os.path.join(os.getcwd(), os.pardir)))
+import configuracion
+
 from bluetooth import *
 import threading
-import sys
 import numpy as np
 import RPi.GPIO as GPIO
 GPIO.setmode(GPIO.BOARD)
 
-bluetoothConectado=threading.Event()
-comando="s"
-#Canales de salidas a motores
-#(motorderA, motorderB, motorizqA, motorizqB)
-canales_motores=(3,5,7,8)
-GPIO.setup(canales_motores,GPIO.OUT)
-#(motorderA, motorderB, motorizqA, motorizqB)
-comandos_a_motores={
-    "s":(0,0,0,0),
-    "f":(1,0,1,0),
-    "b":(0,1,0,1),
-    "r":(1,0,0,1),
-    "l":(0,1,1,0),
-}
-#mapeo de comandos a vector one hot para el entrenamiento
-cmd2onehot={
-    "s":[1,0,0,0,0],
-    "f":[0,1,0,0,0],
-    "b":[0,0,1,0,0],
-    "r":[0,0,0,1,0],
-    "l":[0,0,0,0,1],
-}
+canales_motores, comandos_a_motores = configuracion.ObtenerConfigMotores()
 
+#Configuracion de pines de salida a motores
+GPIO.setup(canales_motores,GPIO.OUT)
+
+bluetoothConectado=threading.Event()
+
+comando="s"
 
 def iniciarBT():
 
@@ -97,12 +85,12 @@ def establecerConexionBT():
 def obtenerComando():
     if (comando=="d"):
         sys.exit()
-    return cmd2onehot[comando]
+    return comando
 
 def procesarComando(cmd):
     if (cmd=="d"):
         return True
-    elif(cmd in comandos_a_motores and cmd in cmd2onehot):
+    elif(cmd in comandos_a_motores):
         GPIO.output(canales_motores, comandos_a_motores[cmd])
         return True
     else:

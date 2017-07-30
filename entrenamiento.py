@@ -10,9 +10,11 @@
 
 #import entrenamientoGUI as egui
 #import wx
+import sys, os
+import configuracion
+import datetime, time
 import tensorflow.contrib.keras as keras
 import modelos
-import os, datetime, time
 import numpy as np
 from random import shuffle
 if __name__ != "__main__":
@@ -21,7 +23,7 @@ if __name__ != "__main__":
     myEVT_ENTRENAMIENTO = wx.NewEventType()
     EVT_ENTRENAMIENTO = wx.PyEventBinder(myEVT_ENTRENAMIENTO, 1)
 
-nombre_de_archivos='training_data-{0}.npy'
+nombre_de_archivos=configuracion.ObtenerNombreArchivos()
 
 def VerificarDimensiones(modelo, loteimagenes, lotesalidas):
     print("Dimensiones:")
