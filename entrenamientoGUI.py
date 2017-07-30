@@ -163,10 +163,11 @@ class Ventana(wx.Frame):
     #Funcion llamada por el boton "Entrenar"
     def OnButtonEntrenar(self,evnt):
         #app.ventana.HabilitarWidgets(entrenando = True)
+        entrenamiento.seguirEntrenamiento.set()
         try:
             #Creacion de hilo que evita que la GUI se bloquee en el proceso de entrenamiento
-            thread = threading.Thread(target=entrenamiento.Entrenar, args=(*app.ventana.ObtenerValores(), self))
-            thread.start()
+            threadEnt = threading.Thread(target=entrenamiento.Entrenar, args=(*app.ventana.ObtenerValores(), self))
+            threadEnt.start()
             #entrenamiento.Entrenar(*app.ventana.ObtenerValores())
         except Exception as e:
             sys.stdout=sys.__stdout__ #Restauracion del canal de salida estandar
@@ -178,7 +179,9 @@ class Ventana(wx.Frame):
     def OnButtonCancelar(self,evnt):
         #app.ventana.HabilitarWidgets(entrenando = False)
         print("Cancelando")
-        entrenamiento.Limpiar(self)
+        entrenamiento.seguirEntrenamiento.clear()
+        
+
 
 
 class App(wx.App):

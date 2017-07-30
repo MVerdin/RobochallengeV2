@@ -10,18 +10,20 @@
 
 #import entrenamientoGUI as egui
 #import wx
-import sys, os
+import sys, os, threading
 import configuracion
 import datetime, time
 import tensorflow.contrib.keras as keras
 import modelos
 import numpy as np
 from random import shuffle
+
 if __name__ != "__main__":
     import wx
     import entrenamientoGUI as gui
     myEVT_ENTRENAMIENTO = wx.NewEventType()
     EVT_ENTRENAMIENTO = wx.PyEventBinder(myEVT_ENTRENAMIENTO, 1)
+    seguirEntrenamiento = threading.Event()
 
 nombre_de_archivos=configuracion.ObtenerNombreArchivos()
 
@@ -71,15 +73,16 @@ def CargarySepararArchivo(ruta_archivo):
 
 
 def EntrenarModelo(modelo, ruta_guardar, imagenes, salidas, epochs, tensorboard):
-    if tensorboard:
-        modelo.fit(x=imagenes, y=salidas, epochs=epochs, validation_split=0.01, callbacks = [keras.callbacks.TensorBoard()], )
-    else:
-        modelo.fit(x=imagenes, y=salidas, epochs=epochs, validation_split=0.01)
-    tiempo=datetime.datetime.today()
-    modelo.save(os.path.join(ruta_guardar, "modelo-{}-{}-{}-{}.h5".
-                             format(tiempo.date(),tiempo.hour,
-                                    tiempo.minute,tiempo.second)))
-    print("modelo-{}-{}-{}-{}.h5 guardado".format(tiempo.date(),tiempo.hour,tiempo.minute,tiempo.second))
+    if seguirEntrenamiento.is_set():
+        if tensorboard:
+            modelo.fit(x=imagenes, y=salidas, epochs=epochs, validation_split=0.01, callbacks = [keras.callbacks.TensorBoard()], )
+        else:
+            modelo.fit(x=imagenes, y=salidas, epochs=epochs, validation_split=0.01)
+        tiempo=datetime.datetime.today()
+        modelo.save(os.path.join(ruta_guardar, "modelo-{}-{}-{}-{}.h5".
+                                 format(tiempo.date(),tiempo.hour,
+                                        tiempo.minute,tiempo.second)))
+        print("modelo-{}-{}-{}-{}.h5 guardado".format(tiempo.date(),tiempo.hour,tiempo.minute,tiempo.second))
     return modelo
 
 
