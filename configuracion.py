@@ -42,3 +42,7 @@ def ObtenerConfigRecoleccion():
 def ObtenerConfigMotores():
     return(canales_motores,
            comandos_a_motores)
+
+def ObtenerConfigPelea():
+    return(resolucion_camara,
+           escala_de_grises)
