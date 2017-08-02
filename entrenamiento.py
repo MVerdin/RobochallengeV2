@@ -77,6 +77,7 @@ def CargarySepararArchivos(lista_archivos):
             for archivo in archivos[1:]:
                 datos_para_entrenamiento = np.concatenate((datos_para_entrenamiento, np.load(archivo)))
         del lista_archivos[:archivos_por_entrenamiento]
+        print("Muestras:", datos_para_entrenamiento.shape[0])
         imagenes = np.array([dato[0] for dato in datos_para_entrenamiento])
         salidas = np.array([dato[1] for dato in datos_para_entrenamiento])
         yield imagenes, salidas
@@ -178,10 +179,10 @@ def Entrenar(ruta_modelo, ruta_datos, tensorboard, continuarentrenamiento,
 
     del imagenes
     del salidas
+    del datos_para_entrenamiento
+
     for imagenes, salidas in CargarySepararArchivos(archivos_entrenamiento):
-        print(imagenes.shape)
-        print(salidas.shape)
-        #modelo = EntrenarModelo(modelo, ruta_datos, imagenes, salidas, epochs, tensorboard)
+        modelo = EntrenarModelo(modelo, ruta_datos, imagenes, salidas, epochs, tensorboard)
 
     modelo.save(os.path.join(ruta_datos, "modelo-final.h5"))
     del modelo
