@@ -180,7 +180,7 @@ class Ventana(wx.Frame):
         #app.ventana.HabilitarWidgets(entrenando = False)
         print("Cancelando")
         entrenamiento.seguirEntrenamiento.clear()
-        
+
 
 
 

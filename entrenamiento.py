@@ -11,6 +11,7 @@
 #import entrenamientoGUI as egui
 #import wx
 import sys, os, threading
+from math import ceil
 import configuracion
 import datetime, time
 import tensorflow.contrib.keras as keras
@@ -25,7 +26,7 @@ if __name__ != "__main__":
     EVT_ENTRENAMIENTO = wx.PyEventBinder(myEVT_ENTRENAMIENTO, 1)
     seguirEntrenamiento = threading.Event()
 
-nombre_de_archivos=configuracion.ObtenerNombreArchivos()
+nombre_de_archivos, archivos_por_entrenamiento=configuracion.ObtenerConfigEntrenamiento()
 
 def VerificarDimensiones(modelo, loteimagenes, lotesalidas):
     print("Dimensiones:")
@@ -65,11 +66,20 @@ def BuscarArchivosEntrenamiento(ruta):
         raise Exception("Carpeta no encontrada")
 
 
-def CargarySepararArchivo(ruta_archivo):
-    datos_para_entrenamiento = np.load(ruta_archivo)
-    imagenes = np.array([dato[0] for dato in datos_para_entrenamiento])
-    salidas = np.array([dato[1] for dato in datos_para_entrenamiento])
-    return imagenes, salidas
+def CargarySepararArchivos(lista_archivos):
+    for i in range(ceil(len(lista_archivos)/archivos_por_entrenamiento)):
+        archivos = lista_archivos[:archivos_por_entrenamiento]
+        print("Cargando archivos:")
+        for a in archivos:
+            print(a)
+        datos_para_entrenamiento = np.load(archivos[0])
+        if len(archivos)>1:
+            for archivo in archivos[1:]:
+                datos_para_entrenamiento = np.concatenate((datos_para_entrenamiento, np.load(archivo)))
+        del lista_archivos[:archivos_por_entrenamiento]
+        imagenes = np.array([dato[0] for dato in datos_para_entrenamiento])
+        salidas = np.array([dato[1] for dato in datos_para_entrenamiento])
+        yield imagenes, salidas
 
 
 def EntrenarModelo(modelo, ruta_guardar, imagenes, salidas, epochs, tensorboard):
@@ -115,7 +125,9 @@ def Entrenar(ruta_modelo, ruta_datos, tensorboard, continuarentrenamiento,
         return False
 
     try:
-        imagenes, salidas = CargarySepararArchivo(archivos_entrenamiento[0])
+        datos_para_entrenamiento = np.load(archivos_entrenamiento[0])
+        imagenes = np.array([dato[0] for dato in datos_para_entrenamiento])
+        salidas = np.array([dato[1] for dato in datos_para_entrenamiento])
 
     except Exception as e:
         print(e)
@@ -164,11 +176,12 @@ def Entrenar(ruta_modelo, ruta_datos, tensorboard, continuarentrenamiento,
 
     print("Empezando entrenamiento")
 
-    modelo = EntrenarModelo(modelo, ruta_datos, imagenes, salidas, epochs, tensorboard)
-
-    for archivo in archivos_entrenamiento[1:]:
-        imagenes, salidas = CargarySepararArchivo(archivo)
-        modelo = EntrenarModelo(modelo, ruta_datos, imagenes, salidas, epochs, tensorboard)
+    del imagenes
+    del salidas
+    for imagenes, salidas in CargarySepararArchivos(archivos_entrenamiento):
+        print(imagenes.shape)
+        print(salidas.shape)
+        #modelo = EntrenarModelo(modelo, ruta_datos, imagenes, salidas, epochs, tensorboard)
 
     modelo.save(os.path.join(ruta_datos, "modelo-final.h5"))
     del modelo

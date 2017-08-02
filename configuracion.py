@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 
+archivos_por_entrenamiento = 3
+
 nombre_de_archivos = 'training_data-{0}.npy'
-muestras_por_archivo = 1000
+muestras_por_archivo = 100
 resolucion_camara = (256,160)
 escala_de_grises = False
 
@@ -29,8 +31,9 @@ comandos_a_motores={
 }
 
 
-def ObtenerNombreArchivos():
-    return nombre_de_archivos
+def ObtenerConfigEntrenamiento():
+    return (nombre_de_archivos,
+            archivos_por_entrenamiento)
 
 def ObtenerConfigRecoleccion():
     return (nombre_de_archivos,
