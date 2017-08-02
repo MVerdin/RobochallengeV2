@@ -4,7 +4,7 @@ sys.path.insert(len(sys.path), os.path.abspath(os.path.join(os.getcwd(), os.pard
 import configuracion
 
 from bluetooth import *
-import threading
+import multiprocessing
 import numpy as np
 import RPi.GPIO as GPIO
 GPIO.setmode(GPIO.BOARD)
@@ -14,22 +14,20 @@ canales_motores, comandos_a_motores = configuracion.ObtenerConfigMotores()
 #Configuracion de pines de salida a motores
 GPIO.setup(canales_motores,GPIO.OUT)
 
-bluetoothConectado=threading.Event()
+bluetoothConectado=multiprocessing.Event()
 
-comando="s"
+comando=multiprocessing.Value("u","s")
 
 def iniciarBT():
-
-    global comando
-    BTthread = threading.Thread(target=establecerConexionBT,name="conexionBT")
+    BTthread = multiprocessing.Process(target=establecerConexionBT,name="conexionBT")
     try:
         BTthread.start()
 
-    except RuntimeError:
-        print("Error al iniciar hilo")
+    except RuntimeError as e:
+        print("Error al iniciar proceso")
+        print(e)
 
 def establecerConexionBT():
-    global comando
     server_sock=BluetoothSocket( RFCOMM )
     server_sock.bind(("",PORT_ANY))
     server_sock.listen(1)
@@ -58,11 +56,13 @@ def establecerConexionBT():
 
                 data = client_sock.recv(1024)
                 if len(data) == 0: break
-                if (procesarComando(str(data, errors="strict"))):
-                    comando = str(data, errors="strict")
-                    if(comando=="d"):
+                mensaje = str(data, errors="strict")
+                if (procesarComando(mensaje) and len(mensaje)==1):
+                    comando.value = mensaje
+                    if(comando.value=="d"):
                         sys.exit()
-
+                else:
+                    comando.value = "s"
         except IOError:
             pass
         except SystemExit:
@@ -83,9 +83,9 @@ def establecerConexionBT():
         print("Desconectado")
 
 def obtenerComando():
-    if (comando=="d"):
+    if (comando.value=="d"):
         sys.exit()
-    return comando
+    return comando.value
 
 def procesarComando(cmd):
     if (cmd=="d"):
@@ -95,4 +95,5 @@ def procesarComando(cmd):
         return True
     else:
         print("Comando desconocido")
+        GPIO.output(canales_motores, comandos_a_motores["s"])
         return False
