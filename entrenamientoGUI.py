@@ -37,7 +37,10 @@ class Ventana(wx.Frame):
     #Creacion de componentes de la ventana
     def __init__(self, *args, **kwds):
         # begin wxGlade: MyFrame.__init__
-        kwds["style"] = wx.MINIMIZE_BOX | wx.MAXIMIZE_BOX  | wx.SYSTEM_MENU | wx.CAPTION | wx.CLOSE_BOX | wx.RESIZE_BORDER
+        kwds["style"] = (wx.MINIMIZE_BOX | wx.MAXIMIZE_BOX |
+                         wx.RESIZE_BORDER | wx.SYSTEM_MENU |
+                         wx.CAPTION | wx.CLOSE_BOX |
+                         wx.CLIP_CHILDREN | wx.FULL_REPAINT_ON_RESIZE)
         wx.Frame.__init__(self, *args, **kwds)
         self.panelprincipal = wx.Panel(self)
         self.checkboxContinuarEnt = wx.CheckBox(self.panelprincipal, wx.ID_ANY, "Continuar entrenamiento")
@@ -67,7 +70,7 @@ class Ventana(wx.Frame):
         # begin wxGlade: MyFrame.__set_properties
         self.SetTitle("Entrenamiento")
         self.SetSize((600, 500))
-
+        self.SetMinSize(wx.Size(420,400))
         # end wxGlade
 
     #Acomodo de los widgets
@@ -120,7 +123,7 @@ class Ventana(wx.Frame):
 
 
         self.panelprincipal.SetSizer(sizer_1)
-        self.Layout()
+        self.panelprincipal.Layout()
         self.SetSize((600, 500))
 
         # end wxGlade
@@ -199,8 +202,12 @@ class App(wx.App):
         self.ventana = Ventana(None)
         self.ventana.HabilitarWidgets(entrenando = False)
         self.ventana.Show()
+        self.ventana.Refresh()
         return True
 
 if __name__ == "__main__":
     app = App(redirect=False)
+    app.ventana.Refresh()
+    import wx.lib.inspection
+    wx.lib.inspection.InspectionTool().Show()
     app.MainLoop()
