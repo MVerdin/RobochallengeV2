@@ -54,8 +54,8 @@ class Ventana(wx.Frame):
         self.buttonEntrenar = wx.Button(self.panelprincipal, wx.ID_ANY, "Entrenar")
         self.buttonCancelar = wx.Button(self.panelprincipal, wx.ID_ANY, "Cancelar")
         self.textConsola = Consola(self.panelprincipal, style=wx.TE_MULTILINE|wx.TE_READONLY|wx.HSCROLL)
-        #sys.stdout = self.textConsola #Redireccion de mensajes a GUI
-        #sys.stderr = self.textConsola #Redireccion de errores a GUI
+        sys.stdout = self.textConsola #Redireccion de mensajes a GUI
+        sys.stderr = self.textConsola #Redireccion de errores a GUI
         self.etiquetaRutaDatos = wx.StaticText(self.panelprincipal, wx.ID_ANY, "Carpeta de datos")
         self.etiquetaNumeroEpochs = wx.StaticText(self.panelprincipal, wx.ID_ANY, "Numero de epochs")
         self.__set_properties()
@@ -92,8 +92,8 @@ class Ventana(wx.Frame):
         sizer_2.Add(sizer_10, 1, wx.EXPAND, 0)
 
         sizer_8.Add(self.checkboxContinuarEnt, 1, wx.EXPAND, 0)
-        sizer_8.Add(self.etiquetaNumeroEpochs, 1, wx.EXPAND, 0)
         sizer_8.Add(self.etiquetaRutaDatos, 1, wx.EXPAND, 0)
+        sizer_8.Add(self.etiquetaNumeroEpochs, 1, wx.EXPAND, 0)
 
         sizer_10.Add(self.intextRutaModelo, 1, wx.EXPAND, 0)
         sizer_10.Add(self.intextRutaDatos, 1, wx.EXPAND, 0)
