@@ -54,8 +54,8 @@ class Ventana(wx.Frame):
         self.buttonEntrenar = wx.Button(self.panelprincipal, wx.ID_ANY, "Entrenar")
         self.buttonCancelar = wx.Button(self.panelprincipal, wx.ID_ANY, "Cancelar")
         self.textConsola = Consola(self.panelprincipal, style=wx.TE_MULTILINE|wx.TE_READONLY|wx.HSCROLL)
-        sys.stdout = self.textConsola #Redireccion de mensajes a GUI
-        sys.stderr = self.textConsola #Redireccion de errores a GUI
+        #sys.stdout = self.textConsola #Redireccion de mensajes a GUI
+        #sys.stderr = self.textConsola #Redireccion de errores a GUI
         self.etiquetaRutaDatos = wx.StaticText(self.panelprincipal, wx.ID_ANY, "Carpeta de datos")
         self.etiquetaNumeroEpochs = wx.StaticText(self.panelprincipal, wx.ID_ANY, "Numero de epochs")
         self.__set_properties()
@@ -80,33 +80,45 @@ class Ventana(wx.Frame):
         sizer_5 = wx.BoxSizer(wx.HORIZONTAL)
         sizer_6 = wx.BoxSizer(wx.HORIZONTAL)
         sizer_2 = wx.BoxSizer(wx.HORIZONTAL)
-        sizer_8 = wx.BoxSizer(wx.HORIZONTAL)
+        sizer_8 = wx.BoxSizer(wx.VERTICAL)
         sizer_9 = wx.BoxSizer(wx.HORIZONTAL)
-        sizer_10 = wx.BoxSizer(wx.HORIZONTAL)
+        sizer_10 = wx.BoxSizer(wx.VERTICAL)
+
         sizer_1.Add(self.textConsola, 1, wx.EXPAND, 0)
-        sizer_2.Add(self.checkboxContinuarEnt, 0, 0, 0)
-        sizer_2.Add(self.intextRutaModelo, 1, 0, 0)
         sizer_1.Add(sizer_2, 0, wx.EXPAND, 0)
-        sizer_1.Add(sizer_8, 0, wx.EXPAND, 0)
-        sizer_1.Add(sizer_10, 0, wx.EXPAND, 0)
-        sizer_8.Add(self.etiquetaRutaDatos, 0, 0, 0)
-        sizer_8.Add(self.intextRutaDatos, 1, 0, 0)
-        sizer_10.Add(self.etiquetaNumeroEpochs, 0, 0, 0)
-        sizer_10.Add(self.selectorEpochs, 1, 0, 0)
-        sizer_9.Add(self.checkboxTensorboard, 1, 0, 0)
-        sizer_9.Add(self.checkboxCambiarPropiedades, 1, 0, 0)
-        sizer_4.Add(sizer_9, 0, wx.EXPAND, 0)
-        sizer_6.Add(self.radioADAM, 1, 0, 0)
-        sizer_6.Add(self.radioCGD, 1, 0, 0)
-        sizer_4.Add(sizer_6, 0, wx.EXPAND, 0)
-        sizer_5.Add(self.checkboxLRP, 0, 0, 0)
-        sizer_5.Add(self.intextLR, 1, wx.LEFT, 4)
-        sizer_4.Add(sizer_5, 0, wx.EXPAND, 0)
+        sizer_1.Add(sizer_3, 0, wx.EXPAND | wx.LEFT, 8)
+
+        sizer_2.Add(sizer_8, 0, wx.EXPAND | wx.RIGHT | wx.LEFT, 8)
+        sizer_2.Add(sizer_10, 1, wx.EXPAND, 0)
+
+        sizer_8.Add(self.checkboxContinuarEnt, 1, wx.EXPAND, 0)
+        sizer_8.Add(self.etiquetaNumeroEpochs, 1, wx.EXPAND, 0)
+        sizer_8.Add(self.etiquetaRutaDatos, 1, wx.EXPAND, 0)
+
+        sizer_10.Add(self.intextRutaModelo, 1, wx.EXPAND, 0)
+        sizer_10.Add(self.intextRutaDatos, 1, wx.EXPAND, 0)
+        sizer_10.Add(self.selectorEpochs, 1, wx.EXPAND, 0)
+
         sizer_3.Add(sizer_4, 1, wx.EXPAND, 0)
+        sizer_3.Add(sizer_7, 0, wx.EXPAND, 0)
+
+        sizer_4.Add(sizer_9, 0, wx.EXPAND, 0)
+        sizer_4.Add(sizer_6, 0, wx.EXPAND, 0)
+        sizer_4.Add(sizer_5, 0, wx.EXPAND, 0)
+
         sizer_7.Add(self.buttonEntrenar, 1, 0, 0)
         sizer_7.Add(self.buttonCancelar, 0, 0, 0)
-        sizer_3.Add(sizer_7, 0, wx.EXPAND, 0)
-        sizer_1.Add(sizer_3, 0, wx.EXPAND, 0)
+
+        sizer_9.Add(self.checkboxTensorboard, 1, 0, 0)
+        sizer_9.Add(self.checkboxCambiarPropiedades, 1, 0, 0)
+
+        sizer_6.Add(self.radioADAM, 1, 0, 0)
+        sizer_6.Add(self.radioCGD, 1, 0, 0)
+
+        sizer_5.Add(self.checkboxLRP, 0, 0, 0)
+        sizer_5.Add(self.intextLR, 1, wx.LEFT, 4)
+
+
         self.panelprincipal.SetSizer(sizer_1)
         self.Layout()
         self.SetSize((600, 500))
@@ -180,8 +192,6 @@ class Ventana(wx.Frame):
         #app.ventana.HabilitarWidgets(entrenando = False)
         print("Cancelando")
         entrenamiento.seguirEntrenamiento.clear()
-
-
 
 
 class App(wx.App):
