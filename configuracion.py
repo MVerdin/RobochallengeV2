@@ -1,52 +1,55 @@
 #!/usr/bin/env python3
 
-archivos_por_entrenamiento = 3
+ARCHIVOS_POR_ENTRENAMIENTO = 3
 
-nombre_de_archivos = 'training_data-{0}.npy'
-muestras_por_archivo = 100
-resolucion_camara = (256,160)
-escala_de_grises = False
+NOMBRE_DE_ARCHIVOS = 'training_data-{0}.npy'
+MUESTRAS_POR_ARCHIVO = 100
+RESOLUCION_CAMARA = (256, 160)
+ESCALA_DE_GRISES = False
 
-#mapeo de comandos a vector one hot para el entrenamiento
-cmd2onehot={
-    "s":[1,0,0,0,0],
-    "f":[0,1,0,0,0],
-    "b":[0,0,1,0,0],
-    "r":[0,0,0,1,0],
-    "l":[0,0,0,0,1],
+# mapeo de comandos a vector one hot para el entrenamiento
+CMD2ONEHOT = {
+    "s": [1, 0, 0, 0, 0],
+    "f": [0, 1, 0, 0, 0],
+    "b": [0, 0, 1, 0, 0],
+    "r": [0, 0, 0, 1, 0],
+    "l": [0, 0, 0, 0, 1],
 }
 
-#Canales de salidas a motores
+# Canales de salidas a motores
 #(motorderA, motorderB, motorizqA, motorizqB)
-canales_motores=(3,5,7,8)
+CANALES_MOTORES = (3, 5, 7, 8)
 
-#Salidas correspondientes a cada comando
+# Salidas correspondientes a cada comando
 #(motorderA, motorderB, motorizqA, motorizqB)
-comandos_a_motores={
-    "s":(0,0,0,0),
-    "f":(1,0,1,0),
-    "b":(0,1,0,1),
-    "r":(1,0,0,1),
-    "l":(0,1,1,0),
+COMANDOS_A_MOTORES = {
+    "s": (0, 0, 0, 0), 
+    "f": (1, 0, 1, 0), 
+    "b": (0, 1, 0, 1), 
+    "r": (1, 0, 0, 1), 
+    "l": (0, 1, 1, 0), 
 }
 
 
 def ObtenerConfigEntrenamiento():
-    return (nombre_de_archivos,
-            archivos_por_entrenamiento)
+    return (NOMBRE_DE_ARCHIVOS,
+            ARCHIVOS_POR_ENTRENAMIENTO)
+
 
 def ObtenerConfigRecoleccion():
-    return (nombre_de_archivos,
-            muestras_por_archivo,
-            resolucion_camara,
-            escala_de_grises,
-            cmd2onehot)
+    return (NOMBRE_DE_ARCHIVOS,
+            MUESTRAS_POR_ARCHIVO,
+            RESOLUCION_CAMARA,
+            ESCALA_DE_GRISES,
+            CMD2ONEHOT)
+
 
 def ObtenerConfigMotores():
-    return(canales_motores,
-           comandos_a_motores)
+    return(CANALES_MOTORES,
+           COMANDOS_A_MOTORES)
+
 
 def ObtenerConfigPelea():
-    return(resolucion_camara,
-           escala_de_grises,
-           comandos_a_motores)
+    return(RESOLUCION_CAMARA,
+           ESCALA_DE_GRISES,
+           COMANDOS_A_MOTORES)
