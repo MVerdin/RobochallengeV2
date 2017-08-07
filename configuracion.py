@@ -9,11 +9,11 @@ ESCALA_DE_GRISES = False
 
 # mapeo de comandos a vector one hot para el entrenamiento
 CMD2ONEHOT = {
-    "s": [1, 0, 0, 0, 0],
-    "f": [0, 1, 0, 0, 0],
-    "b": [0, 0, 1, 0, 0],
-    "r": [0, 0, 0, 1, 0],
-    "l": [0, 0, 0, 0, 1],
+    "s": (1, 0, 0, 0, 0),
+    "f": (0, 1, 0, 0, 0),
+    "b": (0, 0, 1, 0, 0),
+    "r": (0, 0, 0, 1, 0),
+    "l": (0, 0, 0, 0, 1),
 }
 
 # Canales de salidas a motores
@@ -23,11 +23,11 @@ CANALES_MOTORES = (3, 5, 7, 8)
 # Salidas correspondientes a cada comando
 #(motorderA, motorderB, motorizqA, motorizqB)
 COMANDOS_A_MOTORES = {
-    "s": (0, 0, 0, 0), 
-    "f": (1, 0, 1, 0), 
-    "b": (0, 1, 0, 1), 
-    "r": (1, 0, 0, 1), 
-    "l": (0, 1, 1, 0), 
+    (1, 0, 0, 0, 0): (0, 0, 0, 0),
+    (0, 1, 0, 0, 0): (1, 0, 1, 0),
+    (0, 0, 1, 0, 0): (0, 1, 0, 1),
+    (0, 0, 0, 1, 0): (1, 0, 0, 1),
+    (0, 0, 0, 0, 1): (0, 1, 1, 0),
 }
 
 
@@ -46,7 +46,8 @@ def ObtenerConfigRecoleccion():
 
 def ObtenerConfigMotores():
     return(CANALES_MOTORES,
-           COMANDOS_A_MOTORES)
+           COMANDOS_A_MOTORES,
+           CMD2ONEHOT)
 
 
 def ObtenerConfigPelea():

@@ -1,7 +1,5 @@
 #!/usr/bin/env python3
-
-#Punto de entrada para programa de entrenamiento
-#Abrir usando python 3
+'''Modulo con funciones necesarias para llevar a cabo el entrenamiento del modelo'''
 #Dependecias necesarias:
 #tensorflow 1.2
 #wxPython 4
