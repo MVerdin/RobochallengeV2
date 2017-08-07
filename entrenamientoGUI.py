@@ -124,7 +124,7 @@ class Ventana(wx.Frame):
 
         self.panelprincipal.SetSizer(sizer_1)
         self.panelprincipal.Layout()
-        self.SetSize((600, 500))
+        #self.SetSize((600, 500))
 
         # end wxGlade
 
@@ -207,7 +207,6 @@ class App(wx.App):
 
 if __name__ == "__main__":
     app = App(redirect=False)
-    app.ventana.Refresh()
     import wx.lib.inspection
     wx.lib.inspection.InspectionTool().Show()
     app.MainLoop()
