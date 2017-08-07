@@ -6,6 +6,8 @@ import tensorflow.contrib.keras as keras
 import picamera
 import picamera.array
 import numpy as np
+import cv2
+
 sys.path.insert(len(sys.path), os.path.abspath(
     os.path.join(os.getcwd(), os.pardir)))
 import configuracion
@@ -45,11 +47,15 @@ def verificar_dimensiones(modelo):
             and modelo.output_shape[1:] == dimensiones_salida)
 
 
-def tomar_foto(resolucion):
-    with picamera.PiCamera(sensor_mode=6, resolution=resolucion) as camera:
+def tomar_foto():
+    with picamera.PiCamera(sensor_mode=6, resolution=RESOLUCION_CAMARA) as camera:
         with picamera.array.PiRGBArray(camera) as output:
             camera.capture(output, 'rgb', True)
-            imagen = np.expand_dims(output.array, 0)
+            imagen = output.array
+            if ESCALA_DE_GRISES:
+                imagen = cv2.cvtColor(imagen, cv2.COLOR_RGB2GRAY) 
+            imagen = np.expand_dims(imagen, 0)
+
     return imagen
 
 
@@ -76,10 +82,10 @@ def main():
         return
 
     while True:
-        imagenes = tomar_foto(RESOLUCION_CAMARA)
+        imagenes = tomar_foto()
         while len(imagenes) < IMAGENES_POR_DECISION:
             imagenes = np.concatenate(
-                (imagenes, tomar_foto(RESOLUCION_CAMARA)))
+                (imagenes, tomar_foto()))
 
         predicciones = modelo.predict(
             imagenes, batch_size=len(imagenes), verbose=0)
