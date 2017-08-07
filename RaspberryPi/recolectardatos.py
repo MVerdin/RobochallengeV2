@@ -7,6 +7,7 @@ import configuracion
 import controlbluetooth as cbt
 import picamera
 import picamera.array
+import cv2
 import numpy as np
 
 nombre_de_archivos, muestras_por_archivo, resolucion_camara, escala_de_grises, cmd2onehot = configuracion.ObtenerConfigRecoleccion()
@@ -33,10 +34,14 @@ if __name__ == "__main__":
                 if cbt.bluetoothConectado.is_set():
                     starttime=time.time()
                     camera.capture(output, 'rgb',True)
+                    imagen = output.array
+                    if escala_de_grises:
+                        imagen = cv2.cvtColor(imagen, cv2.COLOR_RGB2GRAY)
+                        imagen = np.expand_dims(imagen, 2)
                     tiempo=time.time()-starttime
                     fps=1/tiempo
                     comando_actual=np.array(cmd2onehot[cbt.obtenerComando()])
-                    datos_para_entrenamiento.append([output.array, comando_actual])
+                    datos_para_entrenamiento.append([imagen, comando_actual])
                     print(len(datos_para_entrenamiento), "CMD: ", comando_actual, "FPS: ",fps)
                     output.truncate(0)
                     if (len(datos_para_entrenamiento)==muestras_por_archivo):

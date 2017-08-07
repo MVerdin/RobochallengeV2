@@ -53,7 +53,8 @@ def tomar_foto():
             camera.capture(output, 'rgb', True)
             imagen = output.array
             if ESCALA_DE_GRISES:
-                imagen = cv2.cvtColor(imagen, cv2.COLOR_RGB2GRAY) 
+                imagen = cv2.cvtColor(imagen, cv2.COLOR_RGB2GRAY)
+                imagen = np.expand_dims(imagen, 2)
             imagen = np.expand_dims(imagen, 0)
 
     return imagen
