@@ -9,7 +9,7 @@ import numpy as np
 import RPi.GPIO as GPIO
 GPIO.setmode(GPIO.BOARD)
 
-canales_motores, comandos_a_motores = configuracion.ObtenerConfigMotores()
+canales_motores, comandos_a_motores, cmd2onehot = configuracion.ObtenerConfigMotores()
 
 #Configuracion de pines de salida a motores
 GPIO.setup(canales_motores,GPIO.OUT)
@@ -90,10 +90,11 @@ def obtenerComando():
 def procesarComando(cmd):
     if (cmd=="d"):
         return True
-    elif(cmd in comandos_a_motores):
-        GPIO.output(canales_motores, comandos_a_motores[cmd])
-        return True
+    elif(cmd in cmd2onehot):
+        if(cmd2onehot[cmd] in comandos_a_motores):
+            GPIO.output(canales_motores, comandos_a_motores[cmd2onehot[cmd]])
+            return True
     else:
         print("Comando desconocido")
-        GPIO.output(canales_motores, comandos_a_motores["s"])
+        GPIO.output(canales_motores, comandos_a_motores[cmd2onehot["s"]])
         return False
