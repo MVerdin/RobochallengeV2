@@ -7,8 +7,10 @@ MUESTRAS_POR_ARCHIVO = 100
 RESOLUCION_CAMARA = (256, 160)
 ESCALA_DE_GRISES = False
 
+IMAGENES_POR_DECISION = 2
 # mapeo de comandos a vector one hot para el entrenamiento
 CMD2ONEHOT = {
+
     "s": (1, 0, 0, 0, 0),
     "f": (0, 1, 0, 0, 0),
     "b": (0, 0, 1, 0, 0),
@@ -53,4 +55,6 @@ def ObtenerConfigMotores():
 def ObtenerConfigPelea():
     return(RESOLUCION_CAMARA,
            ESCALA_DE_GRISES,
-           COMANDOS_A_MOTORES)
+           COMANDOS_A_MOTORES,
+           CANALES_MOTORES,
+           IMAGENES_POR_DECISION)
