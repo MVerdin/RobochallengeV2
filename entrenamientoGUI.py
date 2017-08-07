@@ -35,7 +35,7 @@ class EntEvent(wx.PyCommandEvent):
 #Clase generada en wxGlade para la creacion de la ventana
 class Ventana(wx.Frame):
     #Creacion de componentes de la ventana
-    def __init__(self, *args, **kwds):
+    def __init__(self,redireccionar_consola=False, *args, **kwds):
         # begin wxGlade: MyFrame.__init__
         kwds["style"] = (wx.MINIMIZE_BOX | wx.MAXIMIZE_BOX |
                          wx.RESIZE_BORDER | wx.SYSTEM_MENU |
@@ -57,13 +57,15 @@ class Ventana(wx.Frame):
         self.buttonEntrenar = wx.Button(self.panelprincipal, wx.ID_ANY, "Entrenar")
         self.buttonCancelar = wx.Button(self.panelprincipal, wx.ID_ANY, "Cancelar")
         self.textConsola = Consola(self.panelprincipal, style=wx.TE_MULTILINE|wx.TE_READONLY|wx.HSCROLL)
-        sys.stdout = self.textConsola #Redireccion de mensajes a GUI
-        sys.stderr = self.textConsola #Redireccion de errores a GUI
         self.etiquetaRutaDatos = wx.StaticText(self.panelprincipal, wx.ID_ANY, "Carpeta de datos")
         self.etiquetaNumeroEpochs = wx.StaticText(self.panelprincipal, wx.ID_ANY, "Numero de epochs")
         self.__set_properties()
         self.__do_layout()
         self.__do_binding()
+        
+        if redireccionar_consola:
+            sys.stdout = self.textConsola #Redireccion de mensajes a GUI
+            sys.stderr = self.textConsola #Redireccion de errores a GUI
 
     #Configuracion de la ventana
     def __set_properties(self):
@@ -195,14 +197,14 @@ class Ventana(wx.Frame):
 
 class App(wx.App):
     def OnInit(self):
-        self.ventana = Ventana(None)
+        self.ventana = Ventana(True,None)
         self.ventana.HabilitarWidgets(entrenando = False)
         self.ventana.Show()
         self.ventana.Refresh()
         return True
 
 if __name__ == "__main__":
-    app = App(redirect=False)
-    import wx.lib.inspection
-    wx.lib.inspection.InspectionTool().Show()
+    app = App()
+    #import wx.lib.inspection
+    #wx.lib.inspection.InspectionTool().Show()
     app.MainLoop()
