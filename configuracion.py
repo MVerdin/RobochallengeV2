@@ -20,7 +20,7 @@ CMD2ONEHOT = {
 
 # Canales de salidas a motores
 #(motorderA, motorderB, motorizqA, motorizqB)
-CANALES_MOTORES = (3, 5, 7, 8)
+CANALES_MOTORES = (31, 33, 35, 37)
 
 # Salidas correspondientes a cada comando
 #(motorderA, motorderB, motorizqA, motorizqB)
@@ -32,6 +32,28 @@ COMANDOS_A_MOTORES = {
     (0, 0, 0, 0, 1): (0, 1, 1, 0),
 }
 
+PIN_INTERRUPTOR = 32
+CANALES_LED_RGB = (36, 38, 40)
+class LEDEstado():
+    def __init__(self, pines_RGB, estado_inicial="apagado"):
+        import RPi.GPIO as GPIO
+        GPIO.setmode(GPIO.BOARD)
+        self.pines = pines_RGB
+        GPIO.cleanup(self.pines)
+        GPIO.setup(self.pines, GPIO.OUT)
+        self.cambiar_estado(estado_inicial)
+
+    def cambiar_estado(self, estado):
+        if(estado=="apagado"):
+            GPIO.output(self.pines, (1,0,0))
+        elif(estado=="listo"):
+            GPIO.output(self.pines, (0,0,1))
+        elif(estado=="encendido"):
+            GPIO.output(self.pines, (0,1,0))
+
+def ConectarLEDEstado():
+    led = LEDEstado(CANALES_LED_RGB)
+    return led
 
 def ObtenerConfigEntrenamiento():
     return (NOMBRE_DE_ARCHIVOS,
@@ -57,4 +79,5 @@ def ObtenerConfigPelea():
            ESCALA_DE_GRISES,
            COMANDOS_A_MOTORES,
            CANALES_MOTORES,
-           IMAGENES_POR_DECISION)
+           IMAGENES_POR_DECISION,
+           PIN_INTERRUPTOR)
