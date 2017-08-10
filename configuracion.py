@@ -65,7 +65,8 @@ def ObtenerConfigRecoleccion():
             MUESTRAS_POR_ARCHIVO,
             RESOLUCION_CAMARA,
             ESCALA_DE_GRISES,
-            CMD2ONEHOT)
+            CMD2ONEHOT,
+            PIN_INTERRUPTOR)
 
 
 def ObtenerConfigMotores():
