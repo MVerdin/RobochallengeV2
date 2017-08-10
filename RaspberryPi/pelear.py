@@ -71,6 +71,7 @@ def procesar_predicciones(arreglo_predicciones):
             np.argmax(prediccion)]
         if comando in COMANDOS_MOTORES:
             GPIO.output(CANALES_MOTORES, COMANDOS_MOTORES[comando])
+            print("Salida:", prediccion)
         else:
             print("Prediccion invalida")
     else:
