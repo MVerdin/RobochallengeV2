@@ -15,7 +15,7 @@ import picamera.array
 import numpy as np
 import cv2
 import RPi.GPIO as GPIO
-GPIO.setmode(GPIO.BOARD)
+
 
 (RESOLUCION_CAMARA,
     ESCALA_DE_GRISES,
@@ -24,6 +24,7 @@ GPIO.setmode(GPIO.BOARD)
     IMAGENES_POR_DECISION,
     PIN_INTERRUPTOR) = configuracion.ObtenerConfigPelea()
 
+GPIO.setmode(GPIO.BOARD)
 GPIO.cleanup(CANALES_MOTORES)
 GPIO.setup(CANALES_MOTORES, GPIO.OUT)
 GPIO.setup(PIN_INTERRUPTOR, GPIO.IN, pull_up_down=GPIO.PUD_UP)

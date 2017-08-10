@@ -7,7 +7,6 @@ import configuracion
 
 from bluetooth import *
 import multiprocessing
-import numpy as np
 import RPi.GPIO as GPIO
 GPIO.setmode(GPIO.BOARD)
 
