@@ -34,22 +34,7 @@ COMANDOS_A_MOTORES = {
 
 PIN_INTERRUPTOR = 32
 CANALES_LED_RGB = (36, 38, 40)
-class LEDEstado():
-    def __init__(self, pines_RGB, estado_inicial="apagado"):
-        import RPi.GPIO as GPIO
-        GPIO.setmode(GPIO.BOARD)
-        self.pines = pines_RGB
-        GPIO.cleanup(self.pines)
-        GPIO.setup(self.pines, GPIO.OUT)
-        self.cambiar_estado(estado_inicial)
 
-    def cambiar_estado(self, estado):
-        if(estado=="apagado"):
-            GPIO.output(self.pines, (1,0,0))
-        elif(estado=="listo"):
-            GPIO.output(self.pines, (0,0,1))
-        elif(estado=="encendido"):
-            GPIO.output(self.pines, (0,1,0))
 
 def ConectarLEDEstado():
     led = LEDEstado(CANALES_LED_RGB)
@@ -66,7 +51,8 @@ def ObtenerConfigRecoleccion():
             RESOLUCION_CAMARA,
             ESCALA_DE_GRISES,
             CMD2ONEHOT,
-            PIN_INTERRUPTOR)
+            PIN_INTERRUPTOR,
+            CANALES_LED_RGB)
 
 
 def ObtenerConfigMotores():
@@ -81,4 +67,5 @@ def ObtenerConfigPelea():
            COMANDOS_A_MOTORES,
            CANALES_MOTORES,
            IMAGENES_POR_DECISION,
-           PIN_INTERRUPTOR)
+           PIN_INTERRUPTOR,
+           CANALES_LED_RGB)

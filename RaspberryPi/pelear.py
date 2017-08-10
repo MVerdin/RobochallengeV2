@@ -5,9 +5,6 @@ import os
 sys.path.insert(len(sys.path), os.path.abspath(
     os.path.join(os.getcwd(), os.pardir)))
 import configuracion
-
-led_estado = configuracion.ConectarLEDEstado()
-
 import time
 import tensorflow.contrib.keras as keras
 import picamera
@@ -15,14 +12,17 @@ import picamera.array
 import numpy as np
 import cv2
 import RPi.GPIO as GPIO
-
+import led
 
 (RESOLUCION_CAMARA,
     ESCALA_DE_GRISES,
     COMANDOS_MOTORES,
     CANALES_MOTORES,
     IMAGENES_POR_DECISION,
-    PIN_INTERRUPTOR) = configuracion.ObtenerConfigPelea()
+    PIN_INTERRUPTOR,
+    CANALES_LED_RGB) = configuracion.ObtenerConfigPelea()
+
+led_estado = led.LEDEstado(CANALES_LED_RGB,"apagado")
 
 GPIO.setmode(GPIO.BOARD)
 GPIO.cleanup(CANALES_MOTORES)

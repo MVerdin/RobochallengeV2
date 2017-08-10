@@ -6,22 +6,23 @@ import os
 sys.path.insert(len(sys.path), os.path.abspath(
     os.path.join(os.getcwd(), os.pardir)))
 import configuracion
-
-led_estado = configuracion.ConectarLEDEstado()
-
 import controlbluetooth as cbt
 import picamera
 import picamera.array
 import cv2
 import numpy as np
 import RPi.GPIO as GPIO
+import led
 
 (NOMBRE_DE_ARCHIVOS,
  MUESTRAS_POR_ARCHIVO,
  RESOLUCION_CAMARA,
  ESCALA_DE_GRISES,
  CMD2ONEHOT,
- PIN_INTERRUPTOR) = configuracion.ObtenerConfigRecoleccion()
+ PIN_INTERRUPTOR,
+ CANALES_LED_RGB) = configuracion.ObtenerConfigRecoleccion()
+
+led_estado = led.LEDEstado(CANALES_LED_RGB,"apagado")
 
 cbt.iniciarBT()
 
