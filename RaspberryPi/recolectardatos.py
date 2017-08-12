@@ -22,6 +22,8 @@ import led
  PIN_INTERRUPTOR,
  CANALES_LED_RGB) = configuracion.ObtenerConfigRecoleccion()
 
+GPIO.cleanup(CANALES_LED_RGB)
+GPIO.cleanup(PIN_INTERRUPTOR)
 led_estado = led.LEDEstado(CANALES_LED_RGB,"apagado")
 
 cbt.iniciarBT()

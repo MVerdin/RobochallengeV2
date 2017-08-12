@@ -11,9 +11,10 @@ import RPi.GPIO as GPIO
 GPIO.setmode(GPIO.BOARD)
 
 CANALES_MOTORES, COMANDOS_A_MOTORES, CMD2ONEHOT = configuracion.ObtenerConfigMotores()
-
+GPIO.cleanup(CANALES_MOTORES)
 # Configuracion de pines de salida a motores
 GPIO.setup(CANALES_MOTORES, GPIO.OUT)
+
 
 bluetoothConectado = multiprocessing.Event()
 
