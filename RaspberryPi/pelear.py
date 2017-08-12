@@ -26,6 +26,8 @@ led_estado = led.LEDEstado(CANALES_LED_RGB,"apagado")
 
 GPIO.setmode(GPIO.BOARD)
 GPIO.cleanup(CANALES_MOTORES)
+GPIO.cleanup(CANALES_LED_RGB)
+GPIO.cleanup(PIN_INTERRUPTOR)
 GPIO.setup(CANALES_MOTORES, GPIO.OUT)
 GPIO.setup(PIN_INTERRUPTOR, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
@@ -77,8 +79,7 @@ def procesar_predicciones(arreglo_predicciones):
         prediccion = arreglo_predicciones
 
     if(len(prediccion) == len(COMANDOS_MOTORES)):
-        comando = np.eye(len(COMANDOS_MOTORES), dtype=int)[
-            np.argmax(prediccion)]
+        comando = tuple(np.eye(len(COMANDOS_MOTORES), dtype=int)[np.argmax(prediccion)])
         if comando in COMANDOS_MOTORES:
             GPIO.output(CANALES_MOTORES, COMANDOS_MOTORES[comando])
             print("Salida:", prediccion)
@@ -115,6 +116,7 @@ def main():
                     time.sleep(0.1)
             
             except Exception as e:
+                keras.backend.clear_session()
                 led_estado.cambiar_estado("apagado")
                 print(e)
                 sys.exit()
