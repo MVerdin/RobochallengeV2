@@ -22,7 +22,7 @@ import led
     PIN_INTERRUPTOR,
     CANALES_LED_RGB) = configuracion.ObtenerConfigPelea()
 
-led_estado = led.LEDEstado(CANALES_LED_RGB,"apagado")
+
 
 GPIO.setmode(GPIO.BOARD)
 GPIO.cleanup(CANALES_MOTORES)
@@ -31,7 +31,7 @@ GPIO.cleanup(PIN_INTERRUPTOR)
 GPIO.setup(CANALES_MOTORES, GPIO.OUT)
 GPIO.setup(PIN_INTERRUPTOR, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
-
+led_estado = led.LEDEstado(CANALES_LED_RGB,"apagado")
 
 def cargar_modelo(ruta):
     print("Abriendo archivo de modelo")
