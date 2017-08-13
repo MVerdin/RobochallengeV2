@@ -72,6 +72,6 @@ if __name__ == "__main__":
                     print(len(datos_para_entrenamiento),
                           "CMD: ", comando_actual, "FPS: ", fps)
                 else:
-                    print("Control desconectado")
+                    #print("Control desconectado")
                     led_estado.cambiar_estado("listo")
                     time.sleep(1)

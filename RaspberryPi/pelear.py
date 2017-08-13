@@ -5,13 +5,6 @@ import os
 sys.path.insert(len(sys.path), os.path.abspath(
     os.path.join(os.getcwd(), os.pardir)))
 import configuracion
-import time
-import tensorflow.contrib.keras as keras
-import picamera
-import picamera.array
-import numpy as np
-import cv2
-import RPi.GPIO as GPIO
 import led
 
 (RESOLUCION_CAMARA,
@@ -22,16 +15,27 @@ import led
     PIN_INTERRUPTOR,
     CANALES_LED_RGB) = configuracion.ObtenerConfigPelea()
 
+led_estado = led.LEDEstado(CANALES_LED_RGB,"apagado")
+
+import time
+import tensorflow.contrib.keras as keras
+import picamera
+import picamera.array
+import numpy as np
+import cv2
+import RPi.GPIO as GPIO
+
 
 
 GPIO.setmode(GPIO.BOARD)
 GPIO.cleanup(CANALES_MOTORES)
-GPIO.cleanup(CANALES_LED_RGB)
 GPIO.cleanup(PIN_INTERRUPTOR)
 GPIO.setup(CANALES_MOTORES, GPIO.OUT)
 GPIO.setup(PIN_INTERRUPTOR, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
 led_estado = led.LEDEstado(CANALES_LED_RGB,"apagado")
+
+GPIO.output(CANALES_MOTORES, COMANDOS_MOTORES[(1,0,0,0,0)])
 
 def cargar_modelo(ruta):
     print("Abriendo archivo de modelo")
@@ -94,6 +98,7 @@ def main():
     leer_resolucion_modelo(modelo)
 
     if verificar_dimensiones(modelo) is False:
+        print("Dimensiones incorrectas")
         return
 
     
@@ -112,6 +117,7 @@ def main():
 
                     procesar_predicciones(predicciones)
                 else:
+                    GPIO.output(CANALES_MOTORES, COMANDOS_MOTORES[(1,0,0,0,0)])
                     led_estado.cambiar_estado("listo")
                     time.sleep(0.1)
             
