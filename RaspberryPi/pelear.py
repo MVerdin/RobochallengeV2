@@ -80,7 +80,7 @@ def procesar_predicciones(arreglo_predicciones):
     if len(arreglo_predicciones) > 1:
         prediccion = np.mean(arreglo_predicciones, axis=0)
     else:
-        prediccion = arreglo_predicciones
+        prediccion = np.squeeze(arreglo_predicciones, axis=0)
 
     if(len(prediccion) == len(COMANDOS_MOTORES)):
         comando = tuple(np.eye(len(COMANDOS_MOTORES), dtype=int)[np.argmax(prediccion)])
