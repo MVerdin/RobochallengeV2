@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import tensorflow.contrib.keras as keras
+#import keras
 
 #Funcion para generar el modelo keras de la red neuronal
 def GenerarModelo(altoimg,anchoimg,canalesimg,clases):

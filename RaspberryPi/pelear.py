@@ -94,6 +94,7 @@ def procesar_predicciones(arreglo_predicciones):
 
 
 def main():
+    keras.backend.clear_session()
     modelo = cargar_modelo("modelo_pelea.h5")
     leer_resolucion_modelo(modelo)
 

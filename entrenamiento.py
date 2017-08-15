@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 '''Modulo con funciones necesarias para llevar a cabo el entrenamiento del modelo'''
 #Dependecias necesarias:
-#tensorflow 1.2
+#tensorflow 1.1
 #wxPython 4
 #h5py
 #numpy
@@ -12,6 +12,7 @@ import sys, os, threading
 from math import ceil
 import configuracion
 import datetime, time
+#import keras
 import tensorflow.contrib.keras as keras
 import modelos
 import numpy as np
@@ -152,7 +153,7 @@ def Entrenar(ruta_modelo, ruta_datos, tensorboard, continuarentrenamiento,
     else:
         print("Generando modelo nuevo")
         modelo = modelos.GenerarModelo(imagenes.shape[1],imagenes.shape[2],imagenes.shape[3],salidas.shape[1])
-        print("Modelo generado correctamente")
+        print("Modelo generado correctamente | Entrada: {} | Salida: {}".format(imagenes.shape[1:],salidas.shape[1]))
 
     if cambiarpropiedades:
         print("Compilando modelo")
