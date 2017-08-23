@@ -5,6 +5,7 @@ import wx
 import gettext
 import entrenamiento
 import modelos
+import configuracion
 import os, sys, threading
 
 class Consola(wx.TextCtrl):
@@ -51,11 +52,13 @@ class Ventana(wx.Frame):
         self.checkboxLRP = wx.CheckBox(self.panelprincipal, wx.ID_ANY, "LR personalizado")
         self.intextLR = wx.TextCtrl(self.panelprincipal, wx.ID_ANY, "")
         self.selectorEpochs = wx.SpinCtrlDouble(self.panelprincipal,wx.ID_ANY,initial=1)
+        self.selectorNumeroArchivos = wx.SpinCtrlDouble(self.panelprincipal,wx.ID_ANY,initial=configuracion.ARCHIVOS_POR_ENTRENAMIENTO)
         self.buttonEntrenar = wx.Button(self.panelprincipal, wx.ID_ANY, "Entrenar")
         self.buttonCancelar = wx.Button(self.panelprincipal, wx.ID_ANY, "Cancelar")
         self.textConsola = Consola(self.panelprincipal, style=wx.TE_MULTILINE|wx.TE_READONLY|wx.HSCROLL)
         self.etiquetaRutaDatos = wx.StaticText(self.panelprincipal, wx.ID_ANY, "Carpeta de datos")
         self.etiquetaNumeroEpochs = wx.StaticText(self.panelprincipal, wx.ID_ANY, "Numero de epochs")
+        self.etiquetaNumeroArchivos = wx.StaticText(self.panelprincipal, wx.ID_ANY, "Archivos por entrenamiento")
         self.__set_properties()
         self.__do_layout()
         self.__do_binding()
@@ -96,10 +99,12 @@ class Ventana(wx.Frame):
         sizer_8.Add(self.checkboxContinuarEnt, 1, wx.EXPAND, 0)
         sizer_8.Add(self.etiquetaRutaDatos, 1, wx.EXPAND, 0)
         sizer_8.Add(self.etiquetaNumeroEpochs, 1, wx.EXPAND, 0)
+        sizer_8.Add(self.etiquetaNumeroArchivos, 1, wx.EXPAND, 0)
 
         sizer_10.Add(self.intextRutaModelo, 1, wx.EXPAND, 0)
         sizer_10.Add(self.intextRutaDatos, 1, wx.EXPAND, 0)
         sizer_10.Add(self.selectorEpochs, 1, wx.EXPAND, 0)
+        sizer_10.Add(self.selectorNumeroArchivos, 1, wx.EXPAND, 0)
 
         sizer_3.Add(sizer_4, 1, wx.EXPAND, 0)
         sizer_3.Add(sizer_7, 0, wx.EXPAND, 0)
@@ -147,8 +152,10 @@ class Ventana(wx.Frame):
         lr = self.intextLR.GetValue()
         cambiarpropiedades = self.checkboxCambiarPropiedades.GetValue()
         epochs = self.selectorEpochs.GetValue()
+        archivos_por_entrenamiento = self.selectorNumeroArchivos.GetValue()
         return (ruta_modelo, ruta_datos, tensorboard, continuarentrenamiento,
-                lrperzonalizado, optimizador, lr, cambiarpropiedades, int(epochs))
+                lrperzonalizado, optimizador, lr, cambiarpropiedades, int(epochs), 
+                int(archivos_por_entrenamiento))
 
     #Funcion que habilita o deshabilita los widgets dependiendo de las opciones seleccionadas
     def HabilitarWidgets(self, entrenando):
@@ -188,7 +195,7 @@ class Ventana(wx.Frame):
 
     #Funcion llamada por el boton "Cancelar"
     def OnButtonCancelar(self,evnt):
-        print("Cancelando")
+        print("\nCancelando")
         entrenamiento.seguirEntrenamiento.clear()
 
 

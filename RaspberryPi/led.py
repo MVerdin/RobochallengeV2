@@ -17,3 +17,6 @@ class LEDEstado():
             GPIO.output(self.pines, (0,0,1))
         elif(estado=="encendido"):
             GPIO.output(self.pines, (0,1,0))
+            
+    def apagar(self):
+        GPIO.output(self.pines, (0,0,0))

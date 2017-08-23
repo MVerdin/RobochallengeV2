@@ -25,7 +25,8 @@ if __name__ != "__main__":
     EVT_ENTRENAMIENTO = wx.PyEventBinder(myEVT_ENTRENAMIENTO, 1)
     seguirEntrenamiento = threading.Event()
 
-nombre_de_archivos, archivos_por_entrenamiento=configuracion.ObtenerConfigEntrenamiento()
+NOMBRE_ARCHIVOS = configuracion.NOMBRE_DE_ARCHIVOS
+
 
 def VerificarDimensiones(modelo, loteimagenes, lotesalidas):
     print("Dimensiones:")
@@ -50,8 +51,8 @@ def BuscarArchivosEntrenamiento(ruta):
         print("Buscando datos para entrenamiento")
         archivos_encontrados = [nombre_archivo for nombre_archivo
                                in os.listdir(ruta)
-                               if nombre_archivo.startswith(nombre_de_archivos.split("-")[0])
-                               and nombre_archivo.endswith(nombre_de_archivos.split(".")[1])]
+                               if nombre_archivo.startswith(NOMBRE_ARCHIVOS.split("-")[0])
+                               and nombre_archivo.endswith(NOMBRE_ARCHIVOS.split(".")[1])]
         if(len(archivos_encontrados)!=0):
             print("Archivos encontrados:", len(archivos_encontrados))
             for archivo in sorted(archivos_encontrados):
@@ -65,9 +66,9 @@ def BuscarArchivosEntrenamiento(ruta):
         raise Exception("Carpeta no encontrada")
 
 
-def CargarySepararArchivos(lista_archivos):
-    for i in range(ceil(len(lista_archivos)/archivos_por_entrenamiento)):
-        archivos = lista_archivos[:archivos_por_entrenamiento]
+def CargarySepararArchivos(lista_archivos, ARCHIVOS_POR_ENTRENAMIENTO):
+    for i in range(ceil(len(lista_archivos)/ARCHIVOS_POR_ENTRENAMIENTO)):
+        archivos = lista_archivos[:ARCHIVOS_POR_ENTRENAMIENTO]
         print("Cargando archivos:")
         for a in archivos:
             print(a)
@@ -75,8 +76,8 @@ def CargarySepararArchivos(lista_archivos):
         if len(archivos)>1:
             for archivo in archivos[1:]:
                 datos_para_entrenamiento = np.concatenate((datos_para_entrenamiento, np.load(archivo)))
-        del lista_archivos[:archivos_por_entrenamiento]
-        print("Muestras:", datos_para_entrenamiento.shape[0])
+        del lista_archivos[:ARCHIVOS_POR_ENTRENAMIENTO]
+        print("Muestras:", len(datos_para_entrenamiento))
         imagenes = np.array([dato[0] for dato in datos_para_entrenamiento])
         salidas = np.array([dato[1] for dato in datos_para_entrenamiento])
         yield imagenes, salidas
@@ -85,14 +86,20 @@ def CargarySepararArchivos(lista_archivos):
 def EntrenarModelo(modelo, ruta_guardar, imagenes, salidas, epochs, tensorboard):
     if seguirEntrenamiento.is_set():
         if tensorboard:
-            modelo.fit(x=imagenes, y=salidas, epochs=epochs, validation_split=0.01, callbacks = [keras.callbacks.TensorBoard()], )
+            print("TensorBoard no disponible")
+            modelo.fit(x=imagenes, y=salidas, epochs=epochs, validation_split=0.01)#, callbacks = [keras.callbacks.TensorBoard()], )
         else:
             modelo.fit(x=imagenes, y=salidas, epochs=epochs, validation_split=0.01)
         tiempo=datetime.datetime.today()
         modelo.save(os.path.join(ruta_guardar, "modelo-{}-{}-{}-{}.h5".
                                  format(tiempo.date(),tiempo.hour,
                                         tiempo.minute,tiempo.second)))
-        print("modelo-{}-{}-{}-{}.h5 guardado".format(tiempo.date(),tiempo.hour,tiempo.minute,tiempo.second))
+        print("modelo-{}-{}-{}-{}.h5 guardado".format(str(tiempo.year).zfill(4),
+                                                      str(tiempo.month).zfill(2),
+                                                      str(tiempo.day).zfill(2),
+                                                      str(tiempo.hour).zfill(2),
+                                                      str(tiempo.minute).zfill(2),
+                                                      str(tiempo.second).zfill(2)))
     return modelo
 
 
@@ -104,7 +111,7 @@ def Limpiar(ventana):
 
 #Funcion de entrenamiento
 def Entrenar(ruta_modelo, ruta_datos, tensorboard, continuarentrenamiento,
- lrperzonalizado, optimizador, lr, cambiarpropiedades, epochs, ventana):
+ lrperzonalizado, optimizador, lr, cambiarpropiedades, epochs, ARCHIVOS_POR_ENTRENAMIENTO, ventana):
 
 
     print("Modelo: {} | Optimizador: {} | LR: {} | TB: {} | Datos para ent: {} | Epochs: {}"
@@ -180,12 +187,18 @@ def Entrenar(ruta_modelo, ruta_datos, tensorboard, continuarentrenamiento,
     del salidas
     del datos_para_entrenamiento
 
-    for imagenes, salidas in CargarySepararArchivos(archivos_entrenamiento):
-        modelo = EntrenarModelo(modelo, ruta_datos, imagenes, salidas, epochs, tensorboard)
+    for epoch in range(epochs):
+        for imagenes, salidas in CargarySepararArchivos(archivos_entrenamiento, ARCHIVOS_POR_ENTRENAMIENTO):
+            modelo = EntrenarModelo(modelo, ruta_datos, imagenes, salidas, 1, tensorboard)
+            if not seguirEntrenamiento.is_set():
+                break
+        if not seguirEntrenamiento.is_set():
+            print("Entrenamiento cancelado")
+            break
 
-    modelo.save(os.path.join(ruta_datos, "modelo-final.h5"))
+    #modelo.save(os.path.join(ruta_datos, "modelo-final.h5"))
     del modelo
-    time.sleep(5)
+    time.sleep(2)
     print("Entrenamiento terminado")
     Limpiar(ventana)
     return True
