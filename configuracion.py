@@ -20,7 +20,7 @@ CMD2ONEHOT = {
 
 # Canales de salidas a motores
 #(motorderA, motorderB, motorizqA, motorizqB)
-CANALES_MOTORES = (3, 5, 7, 8)
+CANALES_MOTORES = (31, 33, 35, 37)
 
 # Salidas correspondientes a cada comando
 #(motorderA, motorderB, motorizqA, motorizqB)
@@ -32,6 +32,13 @@ COMANDOS_A_MOTORES = {
     (0, 0, 0, 0, 1): (0, 1, 1, 0),
 }
 
+PIN_INTERRUPTOR = 32
+CANALES_LED_RGB = (36, 38, 40)
+
+
+def ConectarLEDEstado():
+    led = LEDEstado(CANALES_LED_RGB)
+    return led
 
 def ObtenerConfigEntrenamiento():
     return (NOMBRE_DE_ARCHIVOS,
@@ -43,7 +50,9 @@ def ObtenerConfigRecoleccion():
             MUESTRAS_POR_ARCHIVO,
             RESOLUCION_CAMARA,
             ESCALA_DE_GRISES,
-            CMD2ONEHOT)
+            CMD2ONEHOT,
+            PIN_INTERRUPTOR,
+            CANALES_LED_RGB)
 
 
 def ObtenerConfigMotores():
@@ -57,4 +66,6 @@ def ObtenerConfigPelea():
            ESCALA_DE_GRISES,
            COMANDOS_A_MOTORES,
            CANALES_MOTORES,
-           IMAGENES_POR_DECISION)
+           IMAGENES_POR_DECISION,
+           PIN_INTERRUPTOR,
+           CANALES_LED_RGB)
