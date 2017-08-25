@@ -91,15 +91,14 @@ def EntrenarModelo(modelo, ruta_guardar, imagenes, salidas, epochs, tensorboard)
         else:
             modelo.fit(x=imagenes, y=salidas, epochs=epochs, validation_split=0.01)
         tiempo=datetime.datetime.today()
-        modelo.save(os.path.join(ruta_guardar, "modelo-{}-{}-{}-{}.h5".
-                                 format(tiempo.date(),tiempo.hour,
-                                        tiempo.minute,tiempo.second)))
-        print("modelo-{}-{}-{}-{}.h5 guardado".format(str(tiempo.year).zfill(4),
-                                                      str(tiempo.month).zfill(2),
-                                                      str(tiempo.day).zfill(2),
-                                                      str(tiempo.hour).zfill(2),
-                                                      str(tiempo.minute).zfill(2),
-                                                      str(tiempo.second).zfill(2)))
+        nombre_de_archivo="modelo-{}{}{}-{}{}{}.h5 guardado".format(str(tiempo.year).zfill(4),
+                                                                    str(tiempo.month).zfill(2),
+                                                                    str(tiempo.day).zfill(2),
+                                                                    str(tiempo.hour).zfill(2),
+                                                                    str(tiempo.minute).zfill(2),
+                                                                    str(tiempo.second).zfill(2))
+        modelo.save(os.path.join(ruta_guardar, nombre_de_archivo))
+        print(nombre_de_archivo, "guardado")
     return modelo
 
 
