@@ -31,6 +31,36 @@ cbt.iniciarBT()
 GPIO.setmode(GPIO.BOARD)
 GPIO.setup(PIN_INTERRUPTOR, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
+def buscar_unidad_usb():
+    if len(os.listdir("/media")) == 1:
+        if len(os.listdir(os.path.join("/media",os.listdir("/media")[0]))) == 1:
+            print("Unidad USB encontrada")
+            ruta = os.path.join("/media", 
+                                os.listdir("/media")[0], 
+                                os.listdir(os.path.join("/media",os.listdir("/media")[0]))[0])
+            return ruta
+    print("Unidad USB no encontrada")
+
+def obtener_ruta_de_guardado():
+    ruta_unidad_usb = buscar_unidad_usb()
+    if ruta_unidad_usb is not None:
+        return ruta_unidad_usb
+    else:
+        if not os.path.isdir("Datos"):
+            os.mkdir(os.path.join(os.getcwd(),"Datos"))
+
+        nombre_carpeta="datos-{}{}{}-{}{}{}".format(str(tiempo.year).zfill(4),
+                                                    str(tiempo.month).zfill(2),
+                                                    str(tiempo.day).zfill(2),
+                                                    str(tiempo.hour).zfill(2),
+                                                    str(tiempo.minute).zfill(2),
+                                                    str(tiempo.second).zfill(2))
+        ruta_carpeta=os.path.join(os.getcwd(),"Datos",nombre_carpeta)
+        os.mkdir(ruta_carpeta)
+        return ruta_carpeta
+
+
+
 if __name__ == "__main__":
     starting_value = 1
 
