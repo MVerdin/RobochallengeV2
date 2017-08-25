@@ -26,7 +26,7 @@ GPIO.cleanup(CANALES_LED_RGB)
 GPIO.cleanup(PIN_INTERRUPTOR)
 led_estado = led.LEDEstado(CANALES_LED_RGB,"apagado")
 
-cbt.iniciarBT()
+
 
 GPIO.setmode(GPIO.BOARD)
 GPIO.setup(PIN_INTERRUPTOR, GPIO.IN, pull_up_down=GPIO.PUD_UP)
@@ -62,6 +62,7 @@ def obtener_ruta_de_guardado():
 
 
 if __name__ == "__main__":
+    cbt.iniciarBT()
     starting_value = 1
 
     while True:
