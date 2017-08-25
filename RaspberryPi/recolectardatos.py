@@ -45,20 +45,22 @@ def buscar_unidad_usb():
 def obtener_ruta_de_guardado():
     ruta_unidad_usb = buscar_unidad_usb()
     if ruta_unidad_usb is not None:
-        return ruta_unidad_usb
+        ruta_base = ruta_unidad_usb
     else:
-        if not os.path.isdir("Datos"):
-            os.mkdir(os.path.join(os.getcwd(),"Datos"))
-        tiempo=datetime.datetime.today()
-        nombre_carpeta="datos-{}{}{}-{}{}{}".format(str(tiempo.year).zfill(4),
-                                                    str(tiempo.month).zfill(2),
-                                                    str(tiempo.day).zfill(2),
-                                                    str(tiempo.hour).zfill(2),
-                                                    str(tiempo.minute).zfill(2),
-                                                    str(tiempo.second).zfill(2))
-        ruta_carpeta=os.path.join(os.getcwd(),"Datos",nombre_carpeta)
-        os.mkdir(ruta_carpeta)
-        return ruta_carpeta
+        ruta_base = os.getcwd()
+    
+    if not os.path.isdir(os.path.join(ruta_base,"Datos")):
+        os.mkdir(os.path.join(ruta_base,"Datos"))
+    tiempo=datetime.datetime.today()
+    nombre_carpeta="datos-{}{}{}-{}{}{}".format(str(tiempo.year).zfill(4),
+                                                str(tiempo.month).zfill(2),
+                                                str(tiempo.day).zfill(2),
+                                                str(tiempo.hour).zfill(2),
+                                                str(tiempo.minute).zfill(2),
+                                                str(tiempo.second).zfill(2))
+    ruta_carpeta=os.path.join(ruta_base,"Datos",nombre_carpeta)
+    os.mkdir(ruta_carpeta)
+    return ruta_carpeta
 
 
 
@@ -66,8 +68,10 @@ if __name__ == "__main__":
     cbt.iniciarBT()
     starting_value = 1
 
+    ruta_guardado = obtener_ruta_de_guardado()
+
     while True:
-        file_name = NOMBRE_DE_ARCHIVOS.format(starting_value)
+        file_name = os.path.join(ruta_guardado,NOMBRE_DE_ARCHIVOS.format(starting_value))
         if os.path.isfile(file_name):
             print('Archivo {c} ya existe, buscando siguiente'.format(
                 c=starting_value))
@@ -75,6 +79,7 @@ if __name__ == "__main__":
         else:
             print('Archivo {c} no existe, empezando'.format(c=starting_value))
             break
+
     datos_para_entrenamiento = []
 
     with picamera.PiCamera(sensor_mode=6, resolution=RESOLUCION_CAMARA) as camera:
@@ -97,7 +102,7 @@ if __name__ == "__main__":
                             i=MUESTRAS_POR_ARCHIVO))
                         datos_para_entrenamiento = []
                         starting_value += 1
-                        file_name = NOMBRE_DE_ARCHIVOS.format(starting_value)
+                        file_name = os.path.join(ruta_guardado,NOMBRE_DE_ARCHIVOS.format(starting_value))
 
                     tiempo = time.time() - starttime
                     fps = 1 / tiempo
