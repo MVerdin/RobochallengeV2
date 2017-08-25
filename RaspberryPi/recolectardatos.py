@@ -2,6 +2,7 @@
 
 import sys
 import time
+import datetime
 import os
 sys.path.insert(len(sys.path), os.path.abspath(
     os.path.join(os.getcwd(), os.pardir)))
@@ -48,7 +49,7 @@ def obtener_ruta_de_guardado():
     else:
         if not os.path.isdir("Datos"):
             os.mkdir(os.path.join(os.getcwd(),"Datos"))
-
+        tiempo=datetime.datetime.today()
         nombre_carpeta="datos-{}{}{}-{}{}{}".format(str(tiempo.year).zfill(4),
                                                     str(tiempo.month).zfill(2),
                                                     str(tiempo.day).zfill(2),
