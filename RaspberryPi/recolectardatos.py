@@ -26,14 +26,14 @@ import led
 ESPACIO_DISPONIBLE_MIN = 300000000
 
 GPIO.setmode(GPIO.BOARD)
+GPIO.setup(PIN_INTERRUPTOR, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
 led_estado = led.LEDEstado(CANALES_LED_RGB,"apagado")
 
 def limpiar():
-    
     GPIO.cleanup(CANALES_LED_RGB)
     GPIO.cleanup(PIN_INTERRUPTOR)
-    GPIO.setup(PIN_INTERRUPTOR, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+    
 
 
 def buscar_unidad_usb():
@@ -76,7 +76,6 @@ def main():
 
     ruta_guardado = obtener_ruta_de_guardado()
 
-    limpiar()
 
     while True:
         file_name = os.path.join(ruta_guardado,NOMBRE_DE_ARCHIVOS.format(starting_value))
