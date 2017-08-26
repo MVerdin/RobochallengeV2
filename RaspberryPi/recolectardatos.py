@@ -23,13 +23,16 @@ import led
  PIN_INTERRUPTOR,
  CANALES_LED_RGB) = configuracion.ObtenerConfigRecoleccion()
 
-GPIO.setmode(GPIO.BOARD)
-GPIO.cleanup(CANALES_LED_RGB)
-GPIO.cleanup(PIN_INTERRUPTOR)
-led_estado = led.LEDEstado(CANALES_LED_RGB,"apagado")
-GPIO.setup(PIN_INTERRUPTOR, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-
 ESPACIO_DISPONIBLE_MIN = 300000000
+
+led_estado = led.LEDEstado(CANALES_LED_RGB,"apagado")
+
+def limpiar():
+    GPIO.setmode(GPIO.BOARD)
+    GPIO.cleanup(CANALES_LED_RGB)
+    GPIO.cleanup(PIN_INTERRUPTOR)
+    GPIO.setup(PIN_INTERRUPTOR, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+
 
 def buscar_unidad_usb():
     if len(os.listdir("/media")) == 1:
@@ -65,12 +68,14 @@ def obtener_espacio_disponible(ruta):
     estadisticas_sistema_archivos=os.statvfs(ruta)
     return estadisticas_sistema_archivos.f_bsize*estadisticas_sistema_archivos.f_bavail
 
-if __name__ == "__main__":
+def main():
     cbt.iniciarBT()
     starting_value = 1
 
     ruta_guardado = obtener_ruta_de_guardado()
 
+    limpiar()
+    
     while True:
         file_name = os.path.join(ruta_guardado,NOMBRE_DE_ARCHIVOS.format(starting_value))
         if os.path.isfile(file_name):
@@ -119,3 +124,14 @@ if __name__ == "__main__":
                     #print("Control desconectado")
                     led_estado.cambiar_estado("listo")
                     time.sleep(1)
+
+    led_estado.apagar()
+
+if __name__ == "__main__":
+    try:
+        main()
+    finally:
+        led_estado.apagar()
+        limpiar()
+        
+    
