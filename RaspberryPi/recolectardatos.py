@@ -23,14 +23,13 @@ import led
  PIN_INTERRUPTOR,
  CANALES_LED_RGB) = configuracion.ObtenerConfigRecoleccion()
 
+GPIO.setmode(GPIO.BOARD)
 GPIO.cleanup(CANALES_LED_RGB)
 GPIO.cleanup(PIN_INTERRUPTOR)
 led_estado = led.LEDEstado(CANALES_LED_RGB,"apagado")
-
-
-
-GPIO.setmode(GPIO.BOARD)
 GPIO.setup(PIN_INTERRUPTOR, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+
+ESPACIO_DISPONIBLE_MIN = 300000000
 
 def buscar_unidad_usb():
     if len(os.listdir("/media")) == 1:
@@ -62,7 +61,9 @@ def obtener_ruta_de_guardado():
     os.mkdir(ruta_carpeta)
     return ruta_carpeta
 
-
+def obtener_espacio_disponible(ruta):
+    estadisticas_sistema_archivos=os.statvfs(ruta)
+    return estadisticas_sistema_archivos.f_bsize*estadisticas_sistema_archivos.f_bavail
 
 if __name__ == "__main__":
     cbt.iniciarBT()
@@ -97,17 +98,23 @@ if __name__ == "__main__":
                     datos_para_entrenamiento.append([imagen, comando_actual])
                     output.truncate(0)
                     if (len(datos_para_entrenamiento) == MUESTRAS_POR_ARCHIVO):
+                        if obtener_espacio_disponible(ruta_guardado) < ESPACIO_DISPONIBLE_MIN:
+                            print("Almacenamiento disponible no suficiente")
+                            break
                         np.save(file_name, datos_para_entrenamiento)
                         print("Guardadas {i} imagenes".format(
                             i=MUESTRAS_POR_ARCHIVO))
                         datos_para_entrenamiento = []
                         starting_value += 1
-                        file_name = os.path.join(ruta_guardado,NOMBRE_DE_ARCHIVOS.format(starting_value))
+                        file_name = os.path.join(ruta_guardado,
+                                                NOMBRE_DE_ARCHIVOS.format(starting_value))
+
 
                     tiempo = time.time() - starttime
                     fps = 1 / tiempo
                     print(len(datos_para_entrenamiento),
                           "CMD: ", comando_actual, "FPS: ", fps)
+
                 else:
                     #print("Control desconectado")
                     led_estado.cambiar_estado("listo")
