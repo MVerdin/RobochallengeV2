@@ -99,13 +99,16 @@ def obtener_espacio_disponible(ruta):
     estadisticas_sistema_archivos=os.statvfs(ruta)
     return estadisticas_sistema_archivos.f_bsize*estadisticas_sistema_archivos.f_bavail
 
+
+guardador = Guardador()
+
 def main():
     cbt.iniciarBT()
     starting_value = 1
 
     ruta_guardado = obtener_ruta_de_guardado()
 
-    guardador = Guardador()
+    
 
     while True:
         file_name = os.path.join(ruta_guardado,NOMBRE_DE_ARCHIVOS.format(starting_value))
@@ -162,6 +165,7 @@ if __name__ == "__main__":
         main()
     finally:
         led_estado.apagar()
+        guardador.apagar()
         limpiar()
         
     
