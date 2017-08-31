@@ -50,7 +50,7 @@ class Guardador():
                 archivo = datos[0]
                 ruta = datos[1]
                 np.save(ruta, archivo)
-                print("Archivo {} guardado".format(ruta))
+                print("Archivo {} guardado con {} imagenes".format(ruta, len(archivo)))
 
     def guardar(self, ruta, archivo):
         self.fila.put([archivo, ruta])
