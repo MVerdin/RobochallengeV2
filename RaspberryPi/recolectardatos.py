@@ -4,6 +4,7 @@ import sys
 import time
 import datetime
 import os
+import multiprocessing, queue
 sys.path.insert(len(sys.path), os.path.abspath(
     os.path.join(os.getcwd(), os.pardir)))
 import configuracion
@@ -30,8 +31,35 @@ GPIO.setup(PIN_INTERRUPTOR, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
 led_estado = led.LEDEstado(CANALES_LED_RGB,"apagado")
 
+
+class Guardador():
+    def __init__ (self):
+        self.fila = multiprocessing.Queue()
+        self.evento_encendido = multiprocessing.Event()
+        self.evento_encendido.set()
+        self.proceso = multiprocessing.Process(target=self.funcion_guardado, args=(self.fila, self.evento_encendido))
+        self.proceso.start()
+
+    def funcion_guardado(self, fila, encendido):
+        while encendido.is_set() is True:
+            try:
+                datos = fila.get(block=False)
+            except queue.Empty:
+                time.sleep(0.05)
+            else:
+                archivo = datos[0]
+                ruta = datos[1]
+                np.save(ruta, archivo)
+
+    def guardar(self, ruta, archivo):
+        self.fila.put([archivo, ruta])
+
+    def apagar(self):
+        self.evento_encendido.clear()
+        self.proceso.join()
+
+
 def limpiar():
-    GPIO.cleanup(CANALES_LED_RGB)
     GPIO.cleanup(PIN_INTERRUPTOR)
     
 
@@ -76,6 +104,7 @@ def main():
 
     ruta_guardado = obtener_ruta_de_guardado()
 
+    guardador = Guardador()
 
     while True:
         file_name = os.path.join(ruta_guardado,NOMBRE_DE_ARCHIVOS.format(starting_value))
@@ -107,7 +136,8 @@ def main():
                         if obtener_espacio_disponible(ruta_guardado) < ESPACIO_DISPONIBLE_MIN:
                             print("Almacenamiento disponible no suficiente")
                             break
-                        np.save(file_name, datos_para_entrenamiento)
+                        guardador.guardar(file_name, datos_para_entrenamiento)
+                        #np.save(file_name, datos_para_entrenamiento)
                         print("Guardadas {i} imagenes".format(
                             i=MUESTRAS_POR_ARCHIVO))
                         datos_para_entrenamiento = []
