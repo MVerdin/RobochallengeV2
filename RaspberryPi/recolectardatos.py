@@ -141,7 +141,7 @@ def main():
                         if obtener_espacio_disponible(ruta_guardado) < ESPACIO_DISPONIBLE_MIN:
                             print("Almacenamiento disponible no suficiente")
                             break
-                        guardador.guardar(file_name, datos_para_entrenamiento)
+                        guardador.guardar(file_name, datos_para_entrenamiento.copy())
                         #np.save(file_name, datos_para_entrenamiento)
                         datos_para_entrenamiento.clear()
                         starting_value += 1
