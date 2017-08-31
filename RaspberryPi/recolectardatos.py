@@ -50,6 +50,7 @@ class Guardador():
                 archivo = datos[0]
                 ruta = datos[1]
                 np.save(ruta, archivo)
+                print("Archivo {} guardado".format(ruta))
 
     def guardar(self, ruta, archivo):
         self.fila.put([archivo, ruta])
@@ -138,8 +139,6 @@ def main():
                             break
                         guardador.guardar(file_name, datos_para_entrenamiento)
                         #np.save(file_name, datos_para_entrenamiento)
-                        print("Guardadas {i} imagenes".format(
-                            i=MUESTRAS_POR_ARCHIVO))
                         datos_para_entrenamiento = []
                         starting_value += 1
                         file_name = os.path.join(ruta_guardado,
