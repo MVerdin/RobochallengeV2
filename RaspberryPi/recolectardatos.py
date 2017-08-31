@@ -53,6 +53,7 @@ class Guardador():
                 print("Archivo {} guardado con {} imagenes".format(ruta, len(archivo)))
 
     def guardar(self, ruta, archivo):
+        print("Archivo {} recibido con {} imagenes".format(ruta, len(archivo)))
         self.fila.put([archivo, ruta])
 
     def apagar(self):
