@@ -139,7 +139,7 @@ def main():
                             break
                         guardador.guardar(file_name, datos_para_entrenamiento)
                         #np.save(file_name, datos_para_entrenamiento)
-                        datos_para_entrenamiento = []
+                        datos_para_entrenamiento.clear()
                         starting_value += 1
                         file_name = os.path.join(ruta_guardado,
                                                 NOMBRE_DE_ARCHIVOS.format(starting_value))
