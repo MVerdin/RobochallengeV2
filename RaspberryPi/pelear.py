@@ -102,38 +102,34 @@ def main():
         print("Dimensiones incorrectas")
         return
 
-    
     with picamera.PiCamera(sensor_mode=6, resolution=RESOLUCION_CAMARA) as camara:
         while True:
             tiempo1=time.time()
-            try:
-                if not GPIO.input(PIN_INTERRUPTOR):
-                    led_estado.cambiar_estado("encendido")
-                    tiempo2=time.time()
-                    imagenes = tomar_foto(camara)
-                    tiempo3=time.time()
-                    while len(imagenes) < IMAGENES_POR_DECISION:
-                        imagenes = np.concatenate(
-                            (imagenes, tomar_foto(camara)))
-                    tiempo4=time.time()
-                    predicciones = modelo.predict(
-                        imagenes, batch_size=len(imagenes), verbose=0)
-                    tiempo5=time.time()
-                    procesar_predicciones(predicciones)
-                    tiempo6=time.time()
-                    print("Tiempos:\nPreparacion: {p}\nTomar 1 foto: {u}\nAñadir {nf} fotos mas: {af}\nObtener predicciones: {op}\nProcesar predicciones: {pp}\n"
-                        .format(p=tiempo2-tiempo1, u=tiempo3-tiempo2, nf=IMAGENES_POR_DECISION-1, af=tiempo4-tiempo3, op=tiempo5-tiempo4, pp=tiempo6-tiempo5))
-                else:
-                    GPIO.output(CANALES_MOTORES, COMANDOS_MOTORES[(1,0,0,0,0)])
-                    led_estado.cambiar_estado("listo")
-                    time.sleep(0.1)
-            
-            except Exception as e:
-                keras.backend.clear_session()
-                led_estado.apagar()
-                print(e)
-                sys.exit()
+            if not GPIO.input(PIN_INTERRUPTOR):
+                led_estado.cambiar_estado("encendido")
+                tiempo2=time.time()
+                imagenes = tomar_foto(camara)
+                tiempo3=time.time()
+                while len(imagenes) < IMAGENES_POR_DECISION:
+                    imagenes = np.concatenate(
+                        (imagenes, tomar_foto(camara)))
+                tiempo4=time.time()
+                predicciones = modelo.predict(
+                    imagenes, batch_size=len(imagenes), verbose=0)
+                tiempo5=time.time()
+                procesar_predicciones(predicciones)
+                tiempo6=time.time()
+                print("Tiempos:\nPreparacion: {p}\nTomar 1 foto: {u}\nAñadir {nf} fotos mas: {af}\nObtener predicciones: {op}\nProcesar predicciones: {pp}\n"
+                    .format(p=tiempo2-tiempo1, u=tiempo3-tiempo2, nf=IMAGENES_POR_DECISION-1, af=tiempo4-tiempo3, op=tiempo5-tiempo4, pp=tiempo6-tiempo5))
+            else:
+                GPIO.output(CANALES_MOTORES, COMANDOS_MOTORES[(1,0,0,0,0)])
+                led_estado.cambiar_estado("listo")
+                time.sleep(0.1)
 
 if __name__ == "__main__":
-    main()
-    GPIO.cleanup(CANALES_MOTORES)
+    try:
+        main()
+    finally:
+        keras.backend.clear_session()
+        led_estado.apagar()
+        GPIO.cleanup(CANALES_MOTORES)
