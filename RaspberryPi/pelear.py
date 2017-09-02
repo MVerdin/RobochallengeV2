@@ -130,7 +130,7 @@ def main():
             
             except Exception as e:
                 keras.backend.clear_session()
-                led_estado.cambiar_estado("apagado")
+                led_estado.apagar()
                 print(e)
                 sys.exit()
 
