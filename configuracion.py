@@ -7,7 +7,7 @@ MUESTRAS_POR_ARCHIVO = 100
 RESOLUCION_CAMARA = (256, 160)
 ESCALA_DE_GRISES = False
 
-IMAGENES_POR_DECISION = 2
+IMAGENES_POR_DECISION = 1
 # mapeo de comandos a vector one hot para el entrenamiento
 CMD2ONEHOT = {
 
