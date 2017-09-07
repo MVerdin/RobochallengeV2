@@ -140,6 +140,7 @@ class Ventana(wx.Frame):
         self.buttonEntrenar.Bind(wx.EVT_BUTTON, self.OnButtonEntrenar)
         self.buttonCancelar.Bind(wx.EVT_BUTTON, self.OnButtonCancelar)
         self.Bind(entrenamiento.EVT_ENTRENAMIENTO, self.OnEntrenamiento)
+        self.Bind(entrenamiento.EVT_ACTUALIZAR_GRAFICAS, self.ActualizarGraficas)
 
     #Funcion que lee los valores introducidos en los widgets
     def ObtenerValores(self):
@@ -198,6 +199,13 @@ class Ventana(wx.Frame):
         print("\nCancelando")
         entrenamiento.seguirEntrenamiento.clear()
 
+    def ActualizarGraficas(self, evnt):
+        print("evento recibido")
+        #print(evnt.recolector.perdidas,
+        #        evnt.recolector.precisiones,
+        #        evnt.recolector.precisiones_promedio,
+        #        evnt.recolector.precisiones_promedio)
+        
 
 class App(wx.App):
     def OnInit(self):

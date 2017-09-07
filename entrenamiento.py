@@ -7,7 +7,7 @@
 #numpy
 
 #import entrenamientoGUI as egui
-#import wx
+import wx.lib.newevent
 import sys, os, threading
 from math import ceil
 import configuracion
@@ -24,6 +24,8 @@ if __name__ != "__main__":
     myEVT_ENTRENAMIENTO = wx.NewEventType()
     EVT_ENTRENAMIENTO = wx.PyEventBinder(myEVT_ENTRENAMIENTO, 1)
     seguirEntrenamiento = threading.Event()
+
+    EventoActualizarGraficas, EVT_ACTUALIZAR_GRAFICAS = wx.lib.newevent.NewEvent()
 
 NOMBRE_ARCHIVOS = configuracion.NOMBRE_DE_ARCHIVOS
 
@@ -82,12 +84,36 @@ def CargarySepararArchivos(lista_archivos, ARCHIVOS_POR_ENTRENAMIENTO):
         salidas = np.array([dato[1] for dato in datos_para_entrenamiento])
         yield imagenes, salidas
 
+class RecolectorDatos(keras.callbacks.Callback):
+    def __init__(self, ventana):
+        self.ventana= ventana
+        self.perdidas=[]
+        self.precisiones=[]
+        self.perdidas_promedio=[]
+        self.precisiones_promedio=[]
+    def on_batch_end(self, batch, logs=None):
+        perdida=logs["loss"]
+        precision=logs["acc"]
+        tiempo=time.time()
+        #print("\n","Perdida:",perdida)
+        #print("Precision:",logs["acc"])
+        self.perdidas.append((tiempo,perdida))
+        self.precisiones.append((tiempo,precision))
+        self.perdidas_promedio.append((tiempo, 
+            float(sum([x[1] for x in self.perdidas])) / max(len([x[1] for x in self.perdidas]), 1)))
+        self.precisiones_promedio.append((tiempo,
+            float(sum([x[1] for x in self.precisiones])) / max(len([x[1] for x in self.precisiones]), 1)))
+        evt = EventoActualizarGraficas(recolector=self)
+        wx.PostEvent(self.ventana, evt)
+        
 
-def EntrenarModelo(modelo, ruta_guardar, imagenes, salidas, epochs, tensorboard):
+
+
+def EntrenarModelo(modelo, ruta_guardar, imagenes, salidas, epochs, tensorboard, recolector_datos):
     if seguirEntrenamiento.is_set():
         if tensorboard:
             print("TensorBoard no disponible")
-            modelo.fit(x=imagenes, y=salidas, epochs=epochs, validation_split=0.01)#, callbacks = [keras.callbacks.TensorBoard()], )
+            modelo.fit(x=imagenes, y=salidas, epochs=epochs, validation_split=0.01, callbacks = [recolector_datos])
         else:
             modelo.fit(x=imagenes, y=salidas, epochs=epochs, validation_split=0.01)
         tiempo=datetime.datetime.today()
@@ -185,10 +211,11 @@ def Entrenar(ruta_modelo, ruta_datos, tensorboard, continuarentrenamiento,
     del imagenes
     del salidas
     del datos_para_entrenamiento
+    recolector_datos = RecolectorDatos(ventana)
 
     for epoch in range(epochs):
         for imagenes, salidas in CargarySepararArchivos(archivos_entrenamiento, ARCHIVOS_POR_ENTRENAMIENTO):
-            modelo = EntrenarModelo(modelo, ruta_datos, imagenes, salidas, 1, tensorboard)
+            modelo = EntrenarModelo(modelo, ruta_datos, imagenes, salidas, 1, tensorboard, recolector_datos)
             if not seguirEntrenamiento.is_set():
                 break
         if not seguirEntrenamiento.is_set():
