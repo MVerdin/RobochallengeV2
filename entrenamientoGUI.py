@@ -2,6 +2,7 @@
 '''Programa de entrenamiento'''
 
 import wx
+import wx.lib.plot as plot
 import gettext
 import entrenamiento
 import modelos
@@ -41,6 +42,7 @@ class Ventana(wx.Frame):
                          wx.CLIP_CHILDREN | wx.FULL_REPAINT_ON_RESIZE)
         wx.Frame.__init__(self, *args, **kwds)
         self.panelprincipal = wx.Panel(self)
+        self.notebook = wx.Notebook(self.panelprincipal)
         self.checkboxContinuarEnt = wx.CheckBox(self.panelprincipal, wx.ID_ANY, "Continuar entrenamiento")
         self.intextRutaModelo = wx.FilePickerCtrl(self.panelprincipal,message="Ruta del modelo guardado", style=wx.FLP_USE_TEXTCTRL)
         self.intextRutaDatos = wx.DirPickerCtrl(self.panelprincipal,message="Ruta de los datos para entrenamiento", style=wx.FLP_USE_TEXTCTRL)
@@ -55,13 +57,22 @@ class Ventana(wx.Frame):
         self.selectorNumeroArchivos = wx.SpinCtrlDouble(self.panelprincipal,wx.ID_ANY,initial=configuracion.ARCHIVOS_POR_ENTRENAMIENTO)
         self.buttonEntrenar = wx.Button(self.panelprincipal, wx.ID_ANY, "Entrenar")
         self.buttonCancelar = wx.Button(self.panelprincipal, wx.ID_ANY, "Cancelar")
-        self.textConsola = Consola(self.panelprincipal, style=wx.TE_MULTILINE|wx.TE_READONLY|wx.HSCROLL)
+        self.textConsola = Consola(self.notebook, style=wx.TE_MULTILINE|wx.TE_READONLY|wx.HSCROLL)
         self.etiquetaRutaDatos = wx.StaticText(self.panelprincipal, wx.ID_ANY, "Carpeta de datos")
         self.etiquetaNumeroEpochs = wx.StaticText(self.panelprincipal, wx.ID_ANY, "Numero de epochs")
         self.etiquetaNumeroArchivos = wx.StaticText(self.panelprincipal, wx.ID_ANY, "Archivos por entrenamiento")
+        
         self.__set_properties()
         self.__do_layout()
         self.__do_binding()
+
+        self.sizerGrafica = wx.BoxSizer(wx.VERTICAL)
+        self.panelGrafica = wx.Panel(self.notebook)
+        self.panelGrafica.SetSizer(self.sizerGrafica)
+        self.grafica = plot.PlotCanvas(self.panelprincipal)
+        self.sizerGrafica.Add(self.grafica)
+        self.notebook.AddPage(self.textConsola, "Consola")
+        self.notebook.AddPage(self.panelGrafica, "Grafica")
         
         if redireccionar_consola:
             sys.stdout = self.textConsola #Redireccion de mensajes a GUI
@@ -89,7 +100,7 @@ class Ventana(wx.Frame):
         sizer_9 = wx.BoxSizer(wx.HORIZONTAL)
         sizer_10 = wx.BoxSizer(wx.VERTICAL)
 
-        sizer_1.Add(self.textConsola, 1, wx.EXPAND, 0)
+        sizer_1.Add(self.notebook, 1, wx.EXPAND, 0)
         sizer_1.Add(sizer_2, 0, wx.EXPAND, 0)
         sizer_1.Add(sizer_3, 0, wx.EXPAND | wx.LEFT, 8)
 
@@ -201,6 +212,12 @@ class Ventana(wx.Frame):
 
     def ActualizarGraficas(self, evnt):
         print("evento recibido")
+        linea_perdidas = plot.PolyLine(evnt.recolector.perdidas, legend="Perdidas")
+        linea_perdidas_promedio = plot.PolyLine(evnt.recolector.perdidas_promedio, legend="Perdidas promedio")
+        linea_precisiones = plot.PolyLine(evnt.recolector.precisiones, legend="Precisiones")
+        linea_precisiones_promedio = plot.PolyLine(evnt.recolector.precisiones_promedio, legend="Precisiones promedio")
+        graficos = plot.PlotGraphics([linea_perdidas,linea_perdidas_promedio,linea_precisiones,linea_precisiones_promedio])
+        self.grafica.Draw(graficos)
         #print(evnt.recolector.perdidas,
         #        evnt.recolector.precisiones,
         #        evnt.recolector.precisiones_promedio,
