@@ -71,7 +71,7 @@ class Ventana(wx.Frame):
     def __set_properties(self):
         # begin wxGlade: MyFrame.__set_properties
         self.SetTitle("Entrenamiento")
-        self.SetSize((600, 500))
+        self.SetSize((700, 600))
         self.SetMinSize(wx.Size(420,400))
         # end wxGlade
 
@@ -90,45 +90,45 @@ class Ventana(wx.Frame):
         sizer_10 = wx.BoxSizer(wx.VERTICAL)
 
         sizer_1.Add(self.textConsola, 1, wx.EXPAND, 0)
-        sizer_1.Add(sizer_2, 0, wx.EXPAND, 0)
-        sizer_1.Add(sizer_3, 0, wx.EXPAND | wx.LEFT, 8)
+        sizer_1.Add(sizer_2, 0, wx.EXPAND| wx.LEFT |wx.RIGHT, 2)
+        sizer_1.Add(sizer_3, 0, wx.EXPAND| wx.LEFT |wx.RIGHT, 2)
 
-        sizer_2.Add(sizer_8, 0, wx.EXPAND | wx.RIGHT | wx.LEFT, 8)
-        sizer_2.Add(sizer_10, 1, wx.EXPAND, 0)
+        sizer_2.Add(sizer_8, 0, wx.EXPAND | wx.ALL, 4)
+        sizer_2.Add(sizer_10, 1, wx.EXPAND | wx.ALL, 4)
 
-        sizer_8.Add(self.checkboxContinuarEnt, 1, wx.EXPAND, 0)
-        sizer_8.Add(self.etiquetaRutaDatos, 1, wx.EXPAND, 0)
-        sizer_8.Add(self.etiquetaNumeroEpochs, 1, wx.EXPAND, 0)
-        sizer_8.Add(self.etiquetaNumeroArchivos, 1, wx.EXPAND, 0)
+        sizer_8.Add(self.checkboxContinuarEnt, 1, wx.EXPAND | wx.TOP | wx.BOTTOM, 2)
+        sizer_8.Add(self.etiquetaRutaDatos, 1, wx.EXPAND | wx.TOP | wx.BOTTOM, 2)
+        sizer_8.Add(self.etiquetaNumeroEpochs, 1, wx.EXPAND | wx.TOP | wx.BOTTOM, 2)
+        sizer_8.Add(self.etiquetaNumeroArchivos, 1, wx.EXPAND | wx.TOP , 2)
 
-        sizer_10.Add(self.intextRutaModelo, 1, wx.EXPAND, 0)
-        sizer_10.Add(self.intextRutaDatos, 1, wx.EXPAND, 0)
-        sizer_10.Add(self.selectorEpochs, 1, wx.EXPAND, 0)
-        sizer_10.Add(self.selectorNumeroArchivos, 1, wx.EXPAND, 0)
+        sizer_10.Add(self.intextRutaModelo, 1, wx.EXPAND | wx.TOP | wx.BOTTOM, 2)
+        sizer_10.Add(self.intextRutaDatos, 1, wx.EXPAND | wx.TOP | wx.BOTTOM, 2)
+        sizer_10.Add(self.selectorEpochs, 1, wx.EXPAND | wx.TOP | wx.BOTTOM, 2)
+        sizer_10.Add(self.selectorNumeroArchivos, 1, wx.EXPAND | wx.TOP , 2)
 
-        sizer_3.Add(sizer_4, 1, wx.EXPAND, 0)
-        sizer_3.Add(sizer_7, 0, wx.EXPAND, 0)
+        sizer_3.Add(sizer_4, 1, wx.EXPAND | wx.RIGHT | wx.LEFT | wx.BOTTOM, 4)
+        sizer_3.Add(sizer_7, 0, wx.EXPAND | wx.RIGHT | wx.LEFT | wx.BOTTOM, 4)
 
         sizer_4.Add(sizer_9, 0, wx.EXPAND, 0)
         sizer_4.Add(sizer_6, 0, wx.EXPAND, 0)
         sizer_4.Add(sizer_5, 0, wx.EXPAND, 0)
 
-        sizer_7.Add(self.buttonEntrenar, 1, 0, 0)
-        sizer_7.Add(self.buttonCancelar, 0, 0, 0)
+        sizer_7.Add(self.buttonEntrenar, 1, wx.BOTTOM, 2)
+        sizer_7.Add(self.buttonCancelar, 0, wx.TOP | wx.BOTTOM, 2)
 
-        sizer_9.Add(self.checkboxTensorboard, 1, 0, 0)
-        sizer_9.Add(self.checkboxCambiarPropiedades, 1, 0, 0)
+        sizer_9.Add(self.checkboxTensorboard, 1,  wx.BOTTOM, 2)
+        sizer_9.Add(self.checkboxCambiarPropiedades, 1,  wx.BOTTOM, 2)
 
-        sizer_6.Add(self.radioADAM, 1, 0, 0)
-        sizer_6.Add(self.radioCGD, 1, 0, 0)
+        sizer_6.Add(self.radioADAM, 1, wx.TOP | wx.BOTTOM, 2)
+        sizer_6.Add(self.radioCGD, 1, wx.TOP | wx.BOTTOM, 2)
 
-        sizer_5.Add(self.checkboxLRP, 0, 0, 0)
-        sizer_5.Add(self.intextLR, 1, wx.LEFT, 4)
+        sizer_5.Add(self.checkboxLRP, 0, wx.TOP , 2)
+        sizer_5.Add(self.intextLR, 1, wx.TOP | wx.BOTTOM, 2)
 
 
         self.panelprincipal.SetSizer(sizer_1)
         self.panelprincipal.Layout()
-        #self.SetSize((600, 500))
+        
 
         # end wxGlade
 
