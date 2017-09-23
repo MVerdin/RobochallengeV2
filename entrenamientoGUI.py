@@ -44,6 +44,7 @@ class Ventana(wx.Frame):
         self.checkboxContinuarEnt = wx.CheckBox(self.panelprincipal, wx.ID_ANY, "Continuar entrenamiento")
         self.intextRutaModelo = wx.FilePickerCtrl(self.panelprincipal,message="Ruta del modelo guardado", style=wx.FLP_USE_TEXTCTRL)
         self.intextRutaDatos = wx.DirPickerCtrl(self.panelprincipal,message="Ruta de los datos para entrenamiento", style=wx.FLP_USE_TEXTCTRL)
+        self.checkboxIncluirSubcarpetas = wx.CheckBox(self.panelprincipal, wx.ID_ANY, "Incluir subcarpetas")
         self.checkboxTensorboard = wx.CheckBox(self.panelprincipal, wx.ID_ANY, "Tensorboard")
         self.checkboxTensorboard.SetValue(True)
         self.checkboxCambiarPropiedades = wx.CheckBox(self.panelprincipal, wx.ID_ANY, "Cambiar propiedades")
@@ -98,11 +99,13 @@ class Ventana(wx.Frame):
 
         sizer_8.Add(self.checkboxContinuarEnt, 1, wx.EXPAND | wx.TOP | wx.BOTTOM, 2)
         sizer_8.Add(self.etiquetaRutaDatos, 1, wx.EXPAND | wx.TOP | wx.BOTTOM, 2)
+        sizer_8.AddSpacer(self.checkboxIncluirSubcarpetas.GetSize().GetHeight()+8)
         sizer_8.Add(self.etiquetaNumeroEpochs, 1, wx.EXPAND | wx.TOP | wx.BOTTOM, 2)
         sizer_8.Add(self.etiquetaNumeroArchivos, 1, wx.EXPAND | wx.TOP , 2)
 
         sizer_10.Add(self.intextRutaModelo, 1, wx.EXPAND | wx.TOP | wx.BOTTOM, 2)
         sizer_10.Add(self.intextRutaDatos, 1, wx.EXPAND | wx.TOP | wx.BOTTOM, 2)
+        sizer_10.Add(self.checkboxIncluirSubcarpetas, 1, wx.EXPAND | wx.TOP | wx.BOTTOM, 2)
         sizer_10.Add(self.selectorEpochs, 1, wx.EXPAND | wx.TOP | wx.BOTTOM, 2)
         sizer_10.Add(self.selectorNumeroArchivos, 1, wx.EXPAND | wx.TOP , 2)
 
@@ -153,9 +156,10 @@ class Ventana(wx.Frame):
         cambiarpropiedades = self.checkboxCambiarPropiedades.GetValue()
         epochs = self.selectorEpochs.GetValue()
         archivos_por_entrenamiento = self.selectorNumeroArchivos.GetValue()
+        incluir_subcarpetas=self.checkboxIncluirSubcarpetas.GetValue()
         return (ruta_modelo, ruta_datos, tensorboard, continuarentrenamiento,
                 lrperzonalizado, optimizador, lr, cambiarpropiedades, int(epochs), 
-                int(archivos_por_entrenamiento))
+                int(archivos_por_entrenamiento), incluir_subcarpetas)
 
     #Funcion que habilita o deshabilita los widgets dependiendo de las opciones seleccionadas
     def HabilitarWidgets(self, entrenando):

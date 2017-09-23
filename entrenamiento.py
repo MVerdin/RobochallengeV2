@@ -65,6 +65,36 @@ def BuscarArchivosEntrenamiento(ruta):
     else:
         raise Exception("Carpeta no encontrada")
 
+def buscar_archivos_entrenamiento(ruta, buscar_recursivamente=True):
+    def buscar_en_carpeta(carpeta, buscar_recursivamente):
+        archivos_encontrados = []
+        contenido_carpeta = os.listdir(carpeta)
+        for elemento in contenido_carpeta:
+            ruta_elemento = os.path.join(carpeta, elemento)
+            if os.path.isfile(ruta_elemento):
+                if (elemento.startswith(NOMBRE_ARCHIVOS.split("-")[0]) and
+                        elemento.endswith(NOMBRE_ARCHIVOS.split(".")[1])):
+                    archivos_encontrados.append(ruta_elemento)
+
+            elif os.path.isdir(ruta_elemento) and buscar_recursivamente:
+                for archivo in buscar_en_carpeta(ruta_elemento, buscar_recursivamente):
+                    archivos_encontrados.append(archivo)
+
+        return archivos_encontrados
+
+    if os.path.isdir(ruta):
+        print("Buscando datos para entrenamiento")
+        archivos_encontrados = buscar_en_carpeta(ruta, buscar_recursivamente)
+        if(len(archivos_encontrados) != 0):
+            print("Archivos encontrados:", len(archivos_encontrados))
+            for archivo in sorted(archivos_encontrados):
+                print(archivo)
+            shuffle(archivos_encontrados)
+            return archivos_encontrados
+        else:
+            raise Exception("No se encontraron archivos")
+    else:
+        raise Exception("Carpeta no encontrada")
 
 def CargarySepararArchivos(lista_archivos, ARCHIVOS_POR_ENTRENAMIENTO):
     for i in range(ceil(len(lista_archivos)/ARCHIVOS_POR_ENTRENAMIENTO)):
@@ -110,7 +140,7 @@ def Limpiar(ventana):
 
 #Funcion de entrenamiento
 def Entrenar(ruta_modelo, ruta_datos, tensorboard, continuarentrenamiento,
- lrperzonalizado, optimizador, lr, cambiarpropiedades, epochs, ARCHIVOS_POR_ENTRENAMIENTO, ventana):
+ lrperzonalizado, optimizador, lr, cambiarpropiedades, epochs, ARCHIVOS_POR_ENTRENAMIENTO, incluir_subcarpetas, ventana):
 
 
     print("Modelo: {} | Optimizador: {} | LR: {} | TB: {} | Datos para ent: {} | Epochs: {}"
@@ -124,7 +154,7 @@ def Entrenar(ruta_modelo, ruta_datos, tensorboard, continuarentrenamiento,
         wx.PostEvent(ventana, evnt)
 
     try:
-        archivos_entrenamiento = BuscarArchivosEntrenamiento(ruta_datos)
+        archivos_entrenamiento = buscar_archivos_entrenamiento(ruta_datos, incluir_subcarpetas)
     except Exception as e:
         print(e)
         Limpiar(ventana)
