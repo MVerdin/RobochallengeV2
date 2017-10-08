@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-import serial, os
+import serial, os, time
 
 
 class Arduino():
@@ -11,7 +11,7 @@ class Arduino():
 
     def conectar(self,velocidad):
         if "ttyACM0" in os.listdir("/dev"):
-            self.puerto = serial.Serial("/dev/ttyACM0", baudrate=velocidad, timeout=0.5)
+            self.puerto = serial.Serial("/dev/ttyACM0", baudrate=velocidad)
             return True
         else:
             print("Arduino no encontrado")
@@ -23,10 +23,22 @@ class Arduino():
     def recibir_linea(self):
         linea_recibida=self.puerto.readline()
         linea_recibida= str(linea_recibida, errors="strict")
-        linea_recibida = linea_recibida.strip("\n")
+        linea_recibida = linea_recibida.strip("\n\r")
         return linea_recibida
     
     def borrar_entrada(self):
         self.puerto.reset_input_buffer()
+
+    def ping(self):
+        self.enviar_linea("ping")
+        t1 = time.time()
+        recibido = self.recibir_linea()
+        if recibido == "ping":
+            t2 = time.time()
+            print(t2-t1, "segundos")
+        else:
+            print(recibido)
+            return recibido
+
 
 
