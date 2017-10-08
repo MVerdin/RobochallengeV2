@@ -30,6 +30,7 @@ class Arduino():
         self.puerto.reset_input_buffer()
 
     def ping(self):
+        self.borrar_entrada()
         self.enviar_linea("ping")
         t1 = time.time()
         recibido = self.recibir_linea()
