@@ -25,6 +25,11 @@ class Arduino():
         linea_recibida= str(linea_recibida, errors="strict")
         linea_recibida = linea_recibida.strip("\n\r")
         return linea_recibida
+
+    def enviar_comando(self, comando):
+        self.borrar_entrada()
+        self.enviar_linea(comando)
+        return self.recibir_linea() == comando
     
     def borrar_entrada(self):
         self.puerto.reset_input_buffer()

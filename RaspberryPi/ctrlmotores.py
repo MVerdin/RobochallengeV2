@@ -12,21 +12,27 @@ class Motores():
 
     def leer_estado(self):
         self.arduino.borrar_entrada()
-        self.arduino.enviar_linea("Mestado")
-        estado = self.arduino.recibir_linea().strip("M")
+        if(not self.arduino.enviar_comando("Mestado")):
+            return None
+        estado = self.arduino.recibir_linea()
         return estado
 
     def detenerse(self):
-        self.arduino.enviar_linea("Mdetenerse")
+        if(not self.arduino.enviar_comando("Mdetenerse")):
+            print("Error al enviar comando")
 
     def avanzar(self):
-        self.arduino.enviar_linea("Mavanzar")
+        if(not self.arduino.enviar_comando("Mavanzar")):
+            print("Error al enviar comando")
 
     def retroceder(self):
-        self.arduino.enviar_linea("Mretroceder")
+        if(not self.arduino.enviar_comando("Mretroceder")):
+            print("Error al enviar comando")
 
     def girar_derecha(self):
-        self.arduino.enviar_linea("Mgirarderecha")
+        if(not self.arduino.enviar_comando("Mgirarderecha")):
+            print("Error al enviar comando")
 
     def girar_izquierda(self):
-        self.arduino.enviar_linea("Mgirarizquierda")
+        if(not self.arduino.enviar_comando("Mgirarizquierda")):
+            print("Error al enviar comando")
