@@ -7,13 +7,19 @@ import configuracion
 
 from bluetooth import *
 import multiprocessing
-import RPi.GPIO as GPIO
-GPIO.setmode(GPIO.BOARD)
 
-CANALES_MOTORES, COMANDOS_A_MOTORES, CMD2ONEHOT = configuracion.ObtenerConfigMotores()
-GPIO.cleanup(CANALES_MOTORES)
+import comarduino
+import ctrlmotores
+arduino = comarduino.Arduino()
+motores = ctrlmotores.Motores(arduino)
+
+#import RPi.GPIO as GPIO
+#GPIO.setmode(GPIO.BOARD)
+
+#CANALES_MOTORES, COMANDOS_A_MOTORES, CMD2ONEHOT = configuracion.ObtenerConfigMotores()
+#GPIO.cleanup(CANALES_MOTORES)
 # Configuracion de pines de salida a motores
-GPIO.setup(CANALES_MOTORES, GPIO.OUT)
+#GPIO.setup(CANALES_MOTORES, GPIO.OUT)
 
 
 bluetoothConectado = multiprocessing.Event()
@@ -97,11 +103,14 @@ def obtenerComando():
 def procesarComando(cmd):
     if (cmd == "d"):
         return True
-    elif(cmd in CMD2ONEHOT):
-        if(CMD2ONEHOT[cmd] in COMANDOS_A_MOTORES):
-            GPIO.output(CANALES_MOTORES, COMANDOS_A_MOTORES[CMD2ONEHOT[cmd]])
-            return True
-    else:
-        print("Comando desconocido")
-        GPIO.output(CANALES_MOTORES, COMANDOS_A_MOTORES[CMD2ONEHOT["s"]])
-        return False
+
+    motores.procesar_comando(cmd)
+    
+#    elif(cmd in CMD2ONEHOT):
+#        if(CMD2ONEHOT[cmd] in COMANDOS_A_MOTORES):
+#            GPIO.output(CANALES_MOTORES, COMANDOS_A_MOTORES[CMD2ONEHOT[cmd]])
+#            return True
+#    else:
+#        print("Comando desconocido")
+#        GPIO.output(CANALES_MOTORES, COMANDOS_A_MOTORES[CMD2ONEHOT["s"]])
+#        return False
