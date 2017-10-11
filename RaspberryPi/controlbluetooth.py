@@ -104,7 +104,7 @@ def procesarComando(cmd):
     if (cmd == "d"):
         return True
 
-    motores.procesar_comando(cmd)
+    return motores.procesar_comando(cmd)
     
 #    elif(cmd in CMD2ONEHOT):
 #        if(CMD2ONEHOT[cmd] in COMANDOS_A_MOTORES):
