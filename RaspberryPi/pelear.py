@@ -128,7 +128,8 @@ def main():
                 print("Tiempos:\nPreparacion: {p}\nTomar 1 foto: {u}\nAñadir {nf} fotos mas: {af}\nObtener predicciones: {op}\nProcesar predicciones: {pp}\n"
                     .format(p=tiempo2-tiempo1, u=tiempo3-tiempo2, nf=IMAGENES_POR_DECISION-1, af=tiempo4-tiempo3, op=tiempo5-tiempo4, pp=tiempo6-tiempo5))
             else:
-                GPIO.output(CANALES_MOTORES, COMANDOS_MOTORES[(1,0,0,0,0)])
+                #GPIO.output(CANALES_MOTORES, COMANDOS_MOTORES[(1,0,0,0,0)])
+                motores.detenerse()
                 led_estado.cambiar_estado("listo")
                 time.sleep(0.1)
 
