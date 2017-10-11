@@ -1,6 +1,6 @@
 
 //Configuracion
-const int tiemposeguridad = 500;
+const int tiemposeguridad = 5000;
 
 //Pines de conexion
 const int pinmotorA1 = 22;

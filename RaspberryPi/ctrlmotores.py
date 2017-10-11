@@ -7,16 +7,16 @@ class Motores():
         self.tiempo_seguridad = tiempo_seguridad
         self.caracteramensaje = {
                                 "s": "Mdetenerse",
-                                "f": "Mavanzar"
-                                "b": "Mretroceder"
-                                "r": "Mgirarderecha"
+                                "f": "Mavanzar",
+                                "b": "Mretroceder",
+                                "r": "Mgirarderecha",
                                 "l": "Mgirarizquierda"
                                 }
         self.vectoramensaje =   {
                                 (1, 0, 0, 0, 0): "Mdetenerse",
-                                (0, 1, 0, 0, 0): "Mavanzar"
-                                (0, 0, 1, 0, 0): "Mretroceder"
-                                (0, 0, 0, 1, 0): "Mgirarderecha"
+                                (0, 1, 0, 0, 0): "Mavanzar",
+                                (0, 0, 1, 0, 0): "Mretroceder",
+                                (0, 0, 0, 1, 0): "Mgirarderecha",
                                 (0, 0, 0, 0, 1): "Mgirarizquierda"
                                 }
 
