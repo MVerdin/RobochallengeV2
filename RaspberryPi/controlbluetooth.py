@@ -80,14 +80,14 @@ def establecerConexionBT():
             client_sock.close()
             server_sock.close()
             print("Conexion cerrada")
-            GPIO.cleanup(CANALES_MOTORES)
+            #GPIO.cleanup(CANALES_MOTORES)
             print("GPIO limpiados")
             sys.exit()
         except KeyboardInterrupt:
             client_sock.close()
             server_sock.close()
             print("Conexion cerrada")
-            GPIO.cleanup(CANALES_MOTORES)
+            #GPIO.cleanup(CANALES_MOTORES)
             print("GPIO limpiados")
             sys.exit()
 
