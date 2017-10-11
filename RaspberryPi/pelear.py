@@ -25,17 +25,22 @@ import numpy as np
 import cv2
 import RPi.GPIO as GPIO
 
+import comarduino
+import ctrlmotores
+arduino = comarduino.Arduino()
+motores = ctrlmotores.Motores(arduino)
+
 
 
 GPIO.setmode(GPIO.BOARD)
-GPIO.cleanup(CANALES_MOTORES)
+#GPIO.cleanup(CANALES_MOTORES)
 GPIO.cleanup(PIN_INTERRUPTOR)
-GPIO.setup(CANALES_MOTORES, GPIO.OUT)
+#GPIO.setup(CANALES_MOTORES, GPIO.OUT)
 GPIO.setup(PIN_INTERRUPTOR, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
 led_estado = led.LEDEstado(CANALES_LED_RGB,"apagado")
 
-GPIO.output(CANALES_MOTORES, COMANDOS_MOTORES[(1,0,0,0,0)])
+#GPIO.output(CANALES_MOTORES, COMANDOS_MOTORES[(1,0,0,0,0)])
 
 def cargar_modelo(ruta):
     print("Abriendo archivo de modelo")
@@ -85,7 +90,8 @@ def procesar_predicciones(arreglo_predicciones):
     if(len(prediccion) == len(COMANDOS_MOTORES)):
         comando = tuple(np.eye(len(COMANDOS_MOTORES), dtype=int)[np.argmax(prediccion)])
         if comando in COMANDOS_MOTORES:
-            GPIO.output(CANALES_MOTORES, COMANDOS_MOTORES[comando])
+            motores.procesar_comando(comando)
+            #GPIO.output(CANALES_MOTORES, COMANDOS_MOTORES[comando])
             print("Salida:", prediccion)
         else:
             print("Prediccion invalida")
