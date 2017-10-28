@@ -8,12 +8,12 @@ import configuracion
 import led
 
 (RESOLUCION_CAMARA,
-    ESCALA_DE_GRISES,
-    COMANDOS_MOTORES,
-    CANALES_MOTORES,
-    IMAGENES_POR_DECISION,
-    PIN_INTERRUPTOR,
-    CANALES_LED_RGB) = configuracion.ObtenerConfigPelea()
+ ESCALA_DE_GRISES,
+ COMANDOS_MOTORES,
+ CANALES_MOTORES,
+ IMAGENES_POR_DECISION,
+ PIN_INTERRUPTOR,
+ CANALES_LED_RGB) = configuracion.ObtenerConfigPelea()
 
 led_estado = led.LEDEstado(CANALES_LED_RGB,"apagado")
 
@@ -25,17 +25,22 @@ import numpy as np
 import cv2
 import RPi.GPIO as GPIO
 
+import comarduino
+import ctrlmotores
+arduino = comarduino.Arduino()
+motores = ctrlmotores.Motores(arduino)
+
 
 
 GPIO.setmode(GPIO.BOARD)
-GPIO.cleanup(CANALES_MOTORES)
+#GPIO.cleanup(CANALES_MOTORES)
 GPIO.cleanup(PIN_INTERRUPTOR)
-GPIO.setup(CANALES_MOTORES, GPIO.OUT)
+#GPIO.setup(CANALES_MOTORES, GPIO.OUT)
 GPIO.setup(PIN_INTERRUPTOR, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
 led_estado = led.LEDEstado(CANALES_LED_RGB,"apagado")
 
-GPIO.output(CANALES_MOTORES, COMANDOS_MOTORES[(1,0,0,0,0)])
+#GPIO.output(CANALES_MOTORES, COMANDOS_MOTORES[(1,0,0,0,0)])
 
 def cargar_modelo(ruta):
     print("Abriendo archivo de modelo")
@@ -85,7 +90,8 @@ def procesar_predicciones(arreglo_predicciones):
     if(len(prediccion) == len(COMANDOS_MOTORES)):
         comando = tuple(np.eye(len(COMANDOS_MOTORES), dtype=int)[np.argmax(prediccion)])
         if comando in COMANDOS_MOTORES:
-            GPIO.output(CANALES_MOTORES, COMANDOS_MOTORES[comando])
+            motores.procesar_comando(comando)
+            #GPIO.output(CANALES_MOTORES, COMANDOS_MOTORES[comando])
             print("Salida:", prediccion)
         else:
             print("Prediccion invalida")
@@ -122,7 +128,8 @@ def main():
                 print("Tiempos:\nPreparacion: {p}\nTomar 1 foto: {u}\nAñadir {nf} fotos mas: {af}\nObtener predicciones: {op}\nProcesar predicciones: {pp}\n"
                     .format(p=tiempo2-tiempo1, u=tiempo3-tiempo2, nf=IMAGENES_POR_DECISION-1, af=tiempo4-tiempo3, op=tiempo5-tiempo4, pp=tiempo6-tiempo5))
             else:
-                GPIO.output(CANALES_MOTORES, COMANDOS_MOTORES[(1,0,0,0,0)])
+                #GPIO.output(CANALES_MOTORES, COMANDOS_MOTORES[(1,0,0,0,0)])
+                motores.detenerse()
                 led_estado.cambiar_estado("listo")
                 time.sleep(0.1)
 
@@ -132,4 +139,4 @@ if __name__ == "__main__":
     finally:
         keras.backend.clear_session()
         led_estado.apagar()
-        GPIO.cleanup(CANALES_MOTORES)
+        #GPIO.cleanup(CANALES_MOTORES)

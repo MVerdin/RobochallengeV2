@@ -36,9 +36,6 @@ PIN_INTERRUPTOR = 32
 CANALES_LED_RGB = (36, 38, 40)
 
 
-def ConectarLEDEstado():
-    led = LEDEstado(CANALES_LED_RGB)
-    return led
 
 def ObtenerConfigEntrenamiento():
     return (NOMBRE_DE_ARCHIVOS,
