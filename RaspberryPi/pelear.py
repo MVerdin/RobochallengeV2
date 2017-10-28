@@ -8,12 +8,12 @@ import configuracion
 import led
 
 (RESOLUCION_CAMARA,
-    ESCALA_DE_GRISES,
-    COMANDOS_MOTORES,
-    CANALES_MOTORES,
-    IMAGENES_POR_DECISION,
-    PIN_INTERRUPTOR,
-    CANALES_LED_RGB) = configuracion.ObtenerConfigPelea()
+ ESCALA_DE_GRISES,
+ COMANDOS_MOTORES,
+ CANALES_MOTORES,
+ IMAGENES_POR_DECISION,
+ PIN_INTERRUPTOR,
+ CANALES_LED_RGB) = configuracion.ObtenerConfigPelea()
 
 led_estado = led.LEDEstado(CANALES_LED_RGB,"apagado")
 
@@ -139,4 +139,4 @@ if __name__ == "__main__":
     finally:
         keras.backend.clear_session()
         led_estado.apagar()
-        GPIO.cleanup(CANALES_MOTORES)
+        #GPIO.cleanup(CANALES_MOTORES)
