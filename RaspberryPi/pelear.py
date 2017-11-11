@@ -98,6 +98,11 @@ def procesar_predicciones(arreglo_predicciones):
     else:
         print("Dimensiones de salida invalidas")
 
+def obtener_predicciones(tensor_salida, tensor_entrada, sesion, imagenes):
+    predicciones=[]
+    for imagen in imagenes:
+        predicciones.append(sesion.run(tensor_salida, feed_dict={tensor_entrada:imagen}))
+    return predicciones
 
 def main():
     keras.backend.clear_session()
@@ -107,6 +112,10 @@ def main():
     if verificar_dimensiones(modelo) is False:
         print("Dimensiones incorrectas")
         return
+    
+    tensor_salida = modelo.output
+    tensor_entrada = modelo.input
+    sesion = keras.backend.get_session()
 
     with picamera.PiCamera(sensor_mode=6, resolution=RESOLUCION_CAMARA) as camara:
         while True:
@@ -114,16 +123,23 @@ def main():
             if not GPIO.input(PIN_INTERRUPTOR):
                 led_estado.cambiar_estado("encendido")
                 tiempo2=time.time()
+
                 imagenes = tomar_foto(camara)
+
                 tiempo3=time.time()
+
                 while len(imagenes) < IMAGENES_POR_DECISION:
                     imagenes = np.concatenate(
                         (imagenes, tomar_foto(camara)))
+
                 tiempo4=time.time()
-                predicciones = modelo.predict(
-                    imagenes, batch_size=len(imagenes), verbose=0)
+
+                predicciones = obtener_predicciones(tensor_salida, sesion, imagenes)
+
                 tiempo5=time.time()
+
                 procesar_predicciones(predicciones)
+
                 tiempo6=time.time()
                 print("Tiempos:\nPreparacion: {p}\nTomar 1 foto: {u}\nAñadir {nf} fotos mas: {af}\nObtener predicciones: {op}\nProcesar predicciones: {pp}\n"
                     .format(p=tiempo2-tiempo1, u=tiempo3-tiempo2, nf=IMAGENES_POR_DECISION-1, af=tiempo4-tiempo3, op=tiempo5-tiempo4, pp=tiempo6-tiempo5))
@@ -132,6 +148,8 @@ def main():
                 motores.detenerse()
                 led_estado.cambiar_estado("listo")
                 time.sleep(0.1)
+
+
 
 if __name__ == "__main__":
     try:
