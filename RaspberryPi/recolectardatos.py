@@ -4,7 +4,6 @@ import sys
 import time
 import datetime
 import os
-import multiprocessing, queue
 sys.path.insert(len(sys.path), os.path.abspath(
     os.path.join(os.getcwd(), os.pardir)))
 import configuracion
@@ -15,6 +14,7 @@ import cv2
 import numpy as np
 import RPi.GPIO as GPIO
 import led
+from guardadorarchivos import Guardador
 
 (NOMBRE_DE_ARCHIVOS,
  MUESTRAS_POR_ARCHIVO,
@@ -29,52 +29,29 @@ ESPACIO_DISPONIBLE_MIN = 300000000
 GPIO.setmode(GPIO.BOARD)
 GPIO.setup(PIN_INTERRUPTOR, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
-led_estado = led.LEDEstado(CANALES_LED_RGB,"apagado")
+led_estado = led.LEDEstado(CANALES_LED_RGB, "apagado")
+guardador = Guardador()
 
 
-class Guardador():
-    def __init__ (self):
-        self.fila = multiprocessing.Queue()
-        self.evento_encendido = multiprocessing.Event()
-        self.evento_encendido.set()
-        self.proceso = multiprocessing.Process(target=self.funcion_guardado, args=(self.fila, self.evento_encendido))
-        self.proceso.start()
 
-    def funcion_guardado(self, fila, encendido):
-        while encendido.is_set() is True:
-            try:
-                datos = fila.get(block=False)
-            except queue.Empty:
-                time.sleep(0.05)
-            else:
-                archivo = datos[0]
-                ruta = datos[1]
-                np.save(ruta, archivo)
-                print("Archivo {} guardado con {} imagenes".format(ruta, len(archivo)))
-
-    def guardar(self, ruta, archivo):
-        print("Archivo {} recibido con {} imagenes".format(ruta, len(archivo)))
-        self.fila.put([archivo, ruta])
-
-    def apagar(self):
-        self.evento_encendido.clear()
-        self.proceso.join()
 
 
 def limpiar():
     GPIO.cleanup(PIN_INTERRUPTOR)
-    
+    led_estado.apagar()
+    guardador.apagar()
 
 
 def buscar_unidad_usb():
     if len(os.listdir("/media")) == 1:
-        if len(os.listdir(os.path.join("/media",os.listdir("/media")[0]))) == 1:
+        if len(os.listdir(os.path.join("/media", os.listdir("/media")[0]))) == 1:
             print("Unidad USB encontrada")
-            ruta = os.path.join("/media", 
-                                os.listdir("/media")[0], 
-                                os.listdir(os.path.join("/media",os.listdir("/media")[0]))[0])
+            ruta = os.path.join("/media",
+                                os.listdir("/media")[0],
+                                os.listdir(os.path.join("/media", os.listdir("/media")[0]))[0])
             return ruta
     print("Unidad USB no encontrada")
+
 
 def obtener_ruta_de_guardado():
     ruta_unidad_usb = buscar_unidad_usb()
@@ -82,26 +59,25 @@ def obtener_ruta_de_guardado():
         ruta_base = ruta_unidad_usb
     else:
         ruta_base = os.getcwd()
-    
-    if not os.path.isdir(os.path.join(ruta_base,"Datos")):
-        os.mkdir(os.path.join(ruta_base,"Datos"))
-    tiempo=datetime.datetime.today()
-    nombre_carpeta="datos-{}{}{}-{}{}{}".format(str(tiempo.year).zfill(4),
-                                                str(tiempo.month).zfill(2),
-                                                str(tiempo.day).zfill(2),
-                                                str(tiempo.hour).zfill(2),
-                                                str(tiempo.minute).zfill(2),
-                                                str(tiempo.second).zfill(2))
-    ruta_carpeta=os.path.join(ruta_base,"Datos",nombre_carpeta)
+
+    if not os.path.isdir(os.path.join(ruta_base, "Datos")):
+        os.mkdir(os.path.join(ruta_base, "Datos"))
+    tiempo = datetime.datetime.today()
+    nombre_carpeta = "datos-{}{}{}-{}{}{}".format(str(tiempo.year).zfill(4),
+                                                  str(tiempo.month).zfill(2),
+                                                  str(tiempo.day).zfill(2),
+                                                  str(tiempo.hour).zfill(2),
+                                                  str(tiempo.minute).zfill(2),
+                                                  str(tiempo.second).zfill(2))
+    ruta_carpeta = os.path.join(ruta_base, "Datos", nombre_carpeta)
     os.mkdir(ruta_carpeta)
     return ruta_carpeta
 
+
 def obtener_espacio_disponible(ruta):
-    estadisticas_sistema_archivos=os.statvfs(ruta)
-    return estadisticas_sistema_archivos.f_bsize*estadisticas_sistema_archivos.f_bavail
+    estadisticas_sistema_archivos = os.statvfs(ruta)
+    return estadisticas_sistema_archivos.f_bsize * estadisticas_sistema_archivos.f_bavail
 
-
-guardador = Guardador()
 
 def main():
     cbt.iniciarBT()
@@ -110,7 +86,8 @@ def main():
     ruta_guardado = obtener_ruta_de_guardado()
 
     while True:
-        file_name = os.path.join(ruta_guardado,NOMBRE_DE_ARCHIVOS.format(starting_value))
+        file_name = os.path.join(
+            ruta_guardado, NOMBRE_DE_ARCHIVOS.format(starting_value))
         if os.path.isfile(file_name):
             print('Archivo {c} ya existe, buscando siguiente'.format(
                 c=starting_value))
@@ -139,13 +116,13 @@ def main():
                         if obtener_espacio_disponible(ruta_guardado) < ESPACIO_DISPONIBLE_MIN:
                             print("Almacenamiento disponible no suficiente")
                             break
-                        guardador.guardar(file_name, datos_para_entrenamiento.copy())
+                        guardador.guardar(
+                            file_name, datos_para_entrenamiento.copy())
                         #np.save(file_name, datos_para_entrenamiento)
                         datos_para_entrenamiento.clear()
                         starting_value += 1
                         file_name = os.path.join(ruta_guardado,
-                                                NOMBRE_DE_ARCHIVOS.format(starting_value))
-
+                                                 NOMBRE_DE_ARCHIVOS.format(starting_value))
 
                     tiempo = time.time() - starttime
                     fps = 1 / tiempo
@@ -159,12 +136,9 @@ def main():
 
     led_estado.apagar()
 
+
 if __name__ == "__main__":
     try:
         main()
     finally:
-        led_estado.apagar()
-        guardador.apagar()
         limpiar()
-        
-    
