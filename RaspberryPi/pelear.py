@@ -99,9 +99,10 @@ def procesar_predicciones(arreglo_predicciones):
         print("Dimensiones de salida invalidas")
 
 def obtener_predicciones(tensor_salida, tensor_entrada, sesion, imagenes):
-    predicciones=[]
-    for imagen in imagenes:
-        predicciones.append(sesion.run(tensor_salida, feed_dict={tensor_entrada:imagen}))
+    predicciones = sesion.run(tensor_salida, feed_dict={tensor_entrada:imagenes})
+#    predicciones=[]
+#    for imagen in imagenes:
+#        predicciones.append(sesion.run(tensor_salida, feed_dict={tensor_entrada:imagen}))
     return predicciones
 
 def main():
