@@ -134,7 +134,7 @@ def main():
 
                 tiempo4=time.time()
 
-                predicciones = obtener_predicciones(tensor_salida, sesion, imagenes)
+                predicciones = obtener_predicciones(tensor_salida,tensor_entrada, sesion, imagenes)
 
                 tiempo5=time.time()
 
