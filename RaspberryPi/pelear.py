@@ -107,6 +107,7 @@ def obtener_predicciones(tensor_salida, tensor_entrada, sesion, imagenes):
 
 def main():
     keras.backend.clear_session()
+    keras.backend.set_learning_phase(0)
     modelo = cargar_modelo("modelo_pelea.h5")
     leer_resolucion_modelo(modelo)
 
