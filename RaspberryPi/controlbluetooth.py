@@ -4,23 +4,13 @@ import os
 sys.path.insert(len(sys.path), os.path.abspath(
     os.path.join(os.getcwd(), os.pardir)))
 import configuracion
-
 from bluetooth import *
 import multiprocessing
-
 import comarduino
 import ctrlmotores
+
 arduino = comarduino.Arduino()
 motores = ctrlmotores.Motores(arduino)
-
-#import RPi.GPIO as GPIO
-#GPIO.setmode(GPIO.BOARD)
-
-#CANALES_MOTORES, COMANDOS_A_MOTORES, CMD2ONEHOT = configuracion.ObtenerConfigMotores()
-#GPIO.cleanup(CANALES_MOTORES)
-# Configuracion de pines de salida a motores
-#GPIO.setup(CANALES_MOTORES, GPIO.OUT)
-
 
 bluetoothConectado = multiprocessing.Event()
 
@@ -56,7 +46,7 @@ def establecerConexionBT():
 
     while True:
         try:
-            print("Esperando conexion en puerto %d" % port)
+            print("Esperando conexion en puerto", port)
             bluetoothConectado.clear()
             client_sock, client_info = server_sock.accept()
             print("Conectado a: ", client_info)
@@ -80,14 +70,14 @@ def establecerConexionBT():
             client_sock.close()
             server_sock.close()
             print("Conexion cerrada")
-            #GPIO.cleanup(CANALES_MOTORES)
+            # GPIO.cleanup(CANALES_MOTORES)
             print("GPIO limpiados")
             sys.exit()
         except KeyboardInterrupt:
             client_sock.close()
             server_sock.close()
             print("Conexion cerrada")
-            #GPIO.cleanup(CANALES_MOTORES)
+            # GPIO.cleanup(CANALES_MOTORES)
             print("GPIO limpiados")
             sys.exit()
 
@@ -103,14 +93,8 @@ def obtenerComando():
 def procesarComando(cmd):
     if (cmd == "d"):
         return True
-
     return motores.procesar_comando(cmd)
-    
-#    elif(cmd in CMD2ONEHOT):
-#        if(CMD2ONEHOT[cmd] in COMANDOS_A_MOTORES):
-#            GPIO.output(CANALES_MOTORES, COMANDOS_A_MOTORES[CMD2ONEHOT[cmd]])
-#            return True
-#    else:
-#        print("Comando desconocido")
-#        GPIO.output(CANALES_MOTORES, COMANDOS_A_MOTORES[CMD2ONEHOT["s"]])
-#        return False
+
+
+if __name__ == "__main__":
+    iniciarBT()
