@@ -10,21 +10,28 @@ def GenerarModelo(altoimg,anchoimg,canalesimg,clases):
     pool1 = keras.layers.MaxPooling2D((2,2))(conv1)
     norm1 = keras.layers.BatchNormalization()(pool1)
 
-    conv2 = keras.layers.Conv2D(64, (3,3))(norm1)
+    conv2 = keras.layers.Conv2D(32, (3,3))(norm1)
     pool2 = keras.layers.MaxPooling2D((2,2))(conv2)
     norm2 = keras.layers.BatchNormalization()(pool2)
 
-    conv3 = keras.layers.Conv2D(64, (3,3))(norm2)
+    conv3 = keras.layers.Conv2D(32, (3,3))(norm2)
     pool3 = keras.layers.MaxPooling2D((2,2))(conv3)
     norm3 = keras.layers.BatchNormalization()(pool3)
 
-    flat = keras.layers.Flatten()(norm3)
+    conv4 = keras.layers.Conv2D(32, (3,3))(norm3)
+    pool4 = keras.layers.MaxPooling2D((2,2))(conv4)
+    norm4 = keras.layers.BatchNormalization()(pool4)
+
+    flat = keras.layers.Flatten()(norm4)
 
     dense1 = keras.layers.Dense(128, activation = "relu")(flat)
     dropout1 = keras.layers.Dropout(0.3)(dense1)
     dense2 = keras.layers.Dense(128, activation = "relu")(dropout1)
 
-    out = keras.layers.Dense(clases, activation = "softmax")(dense2)
+    dropout2 = keras.layers.Dropout(0.3)(dense2)
+    dense3 = keras.layers.Dense(128, activation = "relu")(dropout2)
+
+    out = keras.layers.Dense(clases, activation = "softmax")(dense3)
 
     modelo = keras.models.Model(inputs=entradaImagen, outputs = out)
 
