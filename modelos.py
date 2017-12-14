@@ -18,11 +18,11 @@ def GenerarModelo(altoimg,anchoimg,canalesimg,clases):
     pool3 = keras.layers.MaxPooling2D((2,2))(conv3)
     norm3 = keras.layers.BatchNormalization()(pool3)
 
-    conv4 = keras.layers.Conv2D(32, (3,3))(norm3)
+    conv4 = keras.layers.Conv2D(64, (3,3))(norm3)
     pool4 = keras.layers.MaxPooling2D((2,2))(conv4)
     norm4 = keras.layers.BatchNormalization()(pool4)
 
-    conv5 = keras.layers.Conv2D(32, (3,3))(norm4)
+    conv5 = keras.layers.Conv2D(64, (3,3))(norm4)
     pool5 = keras.layers.MaxPooling2D((2,2))(conv5)
 
     flat = keras.layers.Flatten()(pool5)
