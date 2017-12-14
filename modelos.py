@@ -6,7 +6,7 @@ import tensorflow.contrib.keras as keras
 def GenerarModelo(altoimg,anchoimg,canalesimg,clases):
     entradaImagen = keras.layers.Input(shape=(altoimg,anchoimg,canalesimg))
 
-    conv1 = keras.layers.Conv2D(64, (3,3))(entradaImagen)
+    conv1 = keras.layers.Conv2D(32, (3,3))(entradaImagen)
     pool1 = keras.layers.MaxPooling2D((2,2))(conv1)
     norm1 = keras.layers.BatchNormalization()(pool1)
 
@@ -22,18 +22,21 @@ def GenerarModelo(altoimg,anchoimg,canalesimg,clases):
     pool4 = keras.layers.MaxPooling2D((2,2))(conv4)
     norm4 = keras.layers.BatchNormalization()(pool4)
 
-    flat = keras.layers.Flatten()(norm4)
+    conv5 = keras.layers.Conv2D(32, (3,3))(norm4)
+    pool5 = keras.layers.MaxPooling2D((2,2))(conv5)
+
+    flat = keras.layers.Flatten()(pool5)
 
     dense1 = keras.layers.Dense(128, activation = "relu")(flat)
     dropout1 = keras.layers.Dropout(0.3)(dense1)
     dense2 = keras.layers.Dense(128, activation = "relu")(dropout1)
     dropout2 = keras.layers.Dropout(0.3)(dense2)
     dense3 = keras.layers.Dense(128, activation = "relu")(dropout2)
-    dropout3 = keras.layers.Dropout(0.3)(dense3)
-    dense4 = keras.layers.Dense(128, activation = "relu")(dropout3)
+    #dropout3 = keras.layers.Dropout(0.3)(dense3)
+    #dense4 = keras.layers.Dense(128, activation = "relu")(dropout3)
     
 
-    out = keras.layers.Dense(clases, activation = "softmax")(dense4)
+    out = keras.layers.Dense(clases, activation = "softmax")(dense3)
 
     modelo = keras.models.Model(inputs=entradaImagen, outputs = out)
 
