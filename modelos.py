@@ -27,11 +27,13 @@ def GenerarModelo(altoimg,anchoimg,canalesimg,clases):
     dense1 = keras.layers.Dense(128, activation = "relu")(flat)
     dropout1 = keras.layers.Dropout(0.3)(dense1)
     dense2 = keras.layers.Dense(128, activation = "relu")(dropout1)
-
     dropout2 = keras.layers.Dropout(0.3)(dense2)
     dense3 = keras.layers.Dense(128, activation = "relu")(dropout2)
+    dropout3 = keras.layers.Dropout(0.3)(dense3)
+    dense4 = keras.layers.Dense(128, activation = "relu")(dropout3)
+    
 
-    out = keras.layers.Dense(clases, activation = "softmax")(dense3)
+    out = keras.layers.Dense(clases, activation = "softmax")(dense4)
 
     modelo = keras.models.Model(inputs=entradaImagen, outputs = out)
 
