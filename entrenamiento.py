@@ -217,7 +217,7 @@ def Entrenar(ruta_modelo, ruta_datos, tensorboard, continuarentrenamiento,
     del datos_para_entrenamiento
 
     for epoch in range(epochs):
-        for imagenes, salidas in CargarySepararArchivos(archivos_entrenamiento, ARCHIVOS_POR_ENTRENAMIENTO):
+        for imagenes, salidas in CargarySepararArchivos(archivos_entrenamiento.copy(), ARCHIVOS_POR_ENTRENAMIENTO):
             modelo = EntrenarModelo(modelo, ruta_datos, imagenes, salidas, 1, tensorboard)
             if not seguirEntrenamiento.is_set():
                 break
