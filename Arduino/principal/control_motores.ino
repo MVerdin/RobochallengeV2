@@ -80,28 +80,28 @@ void cambiar_salidas(){
     }
 }
 
-void avanzar(){
+void girarizquierda(){
     digitalWrite(pinmotorA1, HIGH);
     digitalWrite(pinmotorA2, LOW);
     digitalWrite(pinmotorB1, HIGH);
     digitalWrite(pinmotorB2, LOW);
 }
 
-void retroceder(){
+void girarderecha(){
     digitalWrite(pinmotorA1, LOW);
     digitalWrite(pinmotorA2, HIGH);
     digitalWrite(pinmotorB1, LOW);
     digitalWrite(pinmotorB2, HIGH);
 }
 
-void girarderecha(){
+void retroceder(){
     digitalWrite(pinmotorA1, HIGH);
     digitalWrite(pinmotorA2, LOW);
     digitalWrite(pinmotorB1, LOW);
     digitalWrite(pinmotorB2, HIGH);
 }
 
-void girarizquierda(){
+void avanzar(){
     digitalWrite(pinmotorA1, LOW);
     digitalWrite(pinmotorA2, HIGH);
     digitalWrite(pinmotorB1, HIGH);

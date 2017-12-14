@@ -1,12 +1,12 @@
 
 //Configuracion
-const int tiemposeguridad = 5000;
+const int tiemposeguridad = 250;
 
 //Pines de conexion
-const int pinmotorA1 = 22;
-const int pinmotorA2 = 24;
-const int pinmotorB1 = 26;
-const int pinmotorB2 = 28;
+const int pinmotorA1 = 2;
+const int pinmotorA2 = 3;
+const int pinmotorB1 = 4;
+const int pinmotorB2 = 5;
 
 
 //0 detenido, 1 avanzando, 2 retrocediendo, 3 girandoderecha, 4 girandoizquierda

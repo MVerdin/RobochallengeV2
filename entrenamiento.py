@@ -121,7 +121,7 @@ def EntrenarModelo(modelo, ruta_guardar, imagenes, salidas, epochs, tensorboard)
         else:
             modelo.fit(x=imagenes, y=salidas, epochs=epochs, validation_split=0.01)
         tiempo=datetime.datetime.today()
-        nombre_de_archivo="modelo-{}{}{}-{}{}{}.h5 guardado".format(str(tiempo.year).zfill(4),
+        nombre_de_archivo="modelo-{}{}{}-{}{}{}.h5".format(str(tiempo.year).zfill(4),
                                                                     str(tiempo.month).zfill(2),
                                                                     str(tiempo.day).zfill(2),
                                                                     str(tiempo.hour).zfill(2),

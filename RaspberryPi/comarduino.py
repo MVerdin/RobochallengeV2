@@ -10,8 +10,8 @@ class Arduino():
             print("Conexion fallida")
 
     def conectar(self,velocidad):
-        if "ttyACM0" in os.listdir("/dev"):
-            self.puerto = serial.Serial("/dev/ttyACM0", baudrate=velocidad)
+        if "ttyUSB0" in os.listdir("/dev"):
+            self.puerto = serial.Serial("/dev/ttyUSB0", baudrate=velocidad)
             return True
         else:
             print("Arduino no encontrado")

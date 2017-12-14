@@ -24,7 +24,7 @@ from guardadorarchivos import Guardador
  PIN_INTERRUPTOR,
  CANALES_LED_RGB) = configuracion.ObtenerConfigRecoleccion()
 
-ESPACIO_DISPONIBLE_MIN = 300000000
+ESPACIO_DISPONIBLE_MIN = 50000000
 
 GPIO.setmode(GPIO.BOARD)
 GPIO.setup(PIN_INTERRUPTOR, GPIO.IN, pull_up_down=GPIO.PUD_UP)
