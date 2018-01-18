@@ -30,7 +30,7 @@ import ctrlmotores
 arduino = comarduino.Arduino()
 motores = ctrlmotores.Motores(arduino)
 
-
+pesos_finales = np.array((1,10,5,5,5))
 
 GPIO.setmode(GPIO.BOARD)
 #GPIO.cleanup(CANALES_MOTORES)
@@ -86,6 +86,8 @@ def procesar_predicciones(arreglo_predicciones):
         prediccion = np.mean(arreglo_predicciones, axis=0)
     else:
         prediccion = np.squeeze(arreglo_predicciones, axis=0)
+
+    prediccion = prediccion * pesos_finales
 
     if(len(prediccion) == len(COMANDOS_MOTORES)):
         comando = tuple(np.eye(len(COMANDOS_MOTORES), dtype=int)[np.argmax(prediccion)])
