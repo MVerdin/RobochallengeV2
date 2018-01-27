@@ -13,7 +13,7 @@ class Consola(wx.TextCtrl):
         wx.TextCtrl.__init__(self, *args, **kwds)
     #Metodo necesario para recibir los mensajes y mandarlos a la ventana
     def write(self, message):
-        wx.CallAfter(self.WriteText, message)
+        wx.CallAfter(self.WriteText, message.strip(u"\u0008"))
     def flush(self):
         pass
 
@@ -54,6 +54,7 @@ class Ventana(wx.Frame):
         self.intextLR = wx.TextCtrl(self.panelprincipal, wx.ID_ANY, "")
         self.selectorEpochs = wx.SpinCtrlDouble(self.panelprincipal,wx.ID_ANY,initial=1)
         self.selectorNumeroArchivos = wx.SpinCtrlDouble(self.panelprincipal,wx.ID_ANY,initial=configuracion.ARCHIVOS_POR_ENTRENAMIENTO)
+        self.selectorNumeroArchivos.SetMax(999)
         self.buttonEntrenar = wx.Button(self.panelprincipal, wx.ID_ANY, "Entrenar")
         self.buttonCancelar = wx.Button(self.panelprincipal, wx.ID_ANY, "Cancelar")
         self.textConsola = Consola(self.panelprincipal, style=wx.TE_MULTILINE|wx.TE_READONLY|wx.HSCROLL)

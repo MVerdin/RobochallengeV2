@@ -26,6 +26,7 @@ if __name__ != "__main__":
     seguirEntrenamiento = threading.Event()
 
 NOMBRE_ARCHIVOS = configuracion.NOMBRE_DE_ARCHIVOS
+NOMBRE_ARCHIVOS = 'media-{0}.npy'
 
 
 def VerificarDimensiones(modelo, loteimagenes, lotesalidas):
@@ -217,6 +218,7 @@ def Entrenar(ruta_modelo, ruta_datos, tensorboard, continuarentrenamiento,
     del datos_para_entrenamiento
 
     for epoch in range(epochs):
+        print("Epoch:",epoch)
         for imagenes, salidas in CargarySepararArchivos(archivos_entrenamiento.copy(), ARCHIVOS_POR_ENTRENAMIENTO):
             modelo = EntrenarModelo(modelo, ruta_datos, imagenes, salidas, 1, tensorboard)
             if not seguirEntrenamiento.is_set():
