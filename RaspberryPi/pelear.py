@@ -27,10 +27,11 @@ import RPi.GPIO as GPIO
 
 import comarduino
 import ctrlmotores
+import procesadoimagenes as pi
 arduino = comarduino.Arduino()
 motores = ctrlmotores.Motores(arduino)
 
-pesos_finales = np.array((1,10,5,5,5))
+PESOS_FINALES = np.array((1,1,1,1,1))
 
 GPIO.setmode(GPIO.BOARD)
 #GPIO.cleanup(CANALES_MOTORES)
@@ -53,8 +54,9 @@ def cargar_modelo(ruta):
 
 
 def verificar_dimensiones(modelo):
-    dimensiones_camara = (
-        RESOLUCION_CAMARA[1], RESOLUCION_CAMARA[0], 1 if ESCALA_DE_GRISES else 3)
+    with picamera.PiCamera(sensor_mode=6, resolution=RESOLUCION_CAMARA) as camara:
+        foto = tomar_foto(camara)
+    dimensiones_camara = foto.shape[1:]
     dimensiones_salida = (len(COMANDOS_MOTORES),)
     print("Dimensiones:")
     print("Camara: {} | Entrada de modelo: {}".format(
@@ -77,6 +79,7 @@ def tomar_foto(camara):
         if ESCALA_DE_GRISES:
             imagen = cv2.cvtColor(imagen, cv2.COLOR_RGB2GRAY)
             imagen = np.expand_dims(imagen, 2)
+        imagen = pi.procesar_img(imagen, 40, 120)
         imagen = np.expand_dims(imagen, 0)
     return imagen
 
@@ -86,15 +89,15 @@ def procesar_predicciones(arreglo_predicciones):
         prediccion = np.mean(arreglo_predicciones, axis=0)
     else:
         prediccion = np.squeeze(arreglo_predicciones, axis=0)
-
-    prediccion = prediccion * pesos_finales
-
+    print("In",prediccion)
+    prediccion = prediccion * PESOS_FINALES
+    print("Out:",prediccion)
     if(len(prediccion) == len(COMANDOS_MOTORES)):
         comando = tuple(np.eye(len(COMANDOS_MOTORES), dtype=int)[np.argmax(prediccion)])
         if comando in COMANDOS_MOTORES:
             motores.procesar_comando(comando)
             #GPIO.output(CANALES_MOTORES, COMANDOS_MOTORES[comando])
-            print("Salida:", prediccion)
+            print("CMD:", comando)
         else:
             print("Prediccion invalida")
     else:

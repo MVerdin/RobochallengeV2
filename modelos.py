@@ -4,6 +4,7 @@ import tensorflow.contrib.keras as keras
 
 #Funcion para generar el modelo keras de la red neuronal
 def GenerarModelo(altoimg,anchoimg,canalesimg,clases):
+    print("generando modelo:",altoimg,anchoimg,canalesimg,clases)
     entradaImagen = keras.layers.Input(shape=(altoimg,anchoimg,canalesimg))
 
     conv1 = keras.layers.Conv2D(32, (3,3))(entradaImagen)
