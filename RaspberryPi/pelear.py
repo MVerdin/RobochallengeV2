@@ -125,6 +125,8 @@ def main():
                     imagenes = np.concatenate(
                         (imagenes, tomar_foto(camara)))
                 tiempo4=time.time()
+                motores.detenerse()
+                time.sleep(0.3)
                 predicciones = modelo.predict(
                     imagenes, batch_size=len(imagenes), verbose=0)
                 tiempo5=time.time()
