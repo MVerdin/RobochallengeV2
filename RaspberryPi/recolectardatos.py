@@ -15,6 +15,7 @@ import numpy as np
 import RPi.GPIO as GPIO
 import led
 from guardadorarchivos import Guardador
+import procesadoimagenes
 
 (NOMBRE_DE_ARCHIVOS,
  MUESTRAS_POR_ARCHIVO,
@@ -108,6 +109,7 @@ def main():
                     imagen = output.array
                     if ESCALA_DE_GRISES:
                         imagen = cv2.cvtColor(imagen, cv2.COLOR_RGB2GRAY)
+                        imagen = procesadoimagenes.procesar_img(imagen, 40, 120)
                         imagen = np.expand_dims(imagen, 2)
                     comando_actual = np.array(CMD2ONEHOT[cbt.obtenerComando()])
                     datos_para_entrenamiento.append([imagen, comando_actual])

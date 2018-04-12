@@ -26,8 +26,6 @@ if __name__ != "__main__":
     seguirEntrenamiento = threading.Event()
 
 NOMBRE_ARCHIVOS = configuracion.NOMBRE_DE_ARCHIVOS
-NOMBRE_ARCHIVOS = 'media-{0}.npy'
-
 
 def VerificarDimensiones(modelo, loteimagenes, lotesalidas):
     print("Dimensiones:")
